@@ -23,7 +23,6 @@ public class TimeSLList {
 
     public static void timeGetLast() {
         // TODO: YOUR CODE HERE
-        SLList slist = new SLList();
         AList<Integer> nlist = new AList<>();
         AList timelist = new AList();
         nlist.addLast(1000);
@@ -36,6 +35,7 @@ public class TimeSLList {
         nlist.addLast(128000);
 
         for(int k=0;k<nlist.size();k++) {
+            SLList slist = new SLList();
             for(int i=0;i<nlist.get(k);i++) {
                 slist.addLast(1);
             }
