@@ -18,7 +18,7 @@ public class TestArrayDequeEC {
         int N = 1000;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 7);
+            int operationNumber = StdRandom.uniform(0, 5);
             if (operationNumber == 0) {
                 // addLast
                 int randVal = StdRandom.uniform(0, 100);
