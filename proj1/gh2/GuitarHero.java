@@ -2,7 +2,6 @@ package gh2;
 import edu.princeton.cs.algs4.StdAudio;
 import edu.princeton.cs.algs4.StdDraw;
 import deque.ArrayDeque;
-import deque.Deque;
 
 public class GuitarHero {
     public static final double CONCERT_A = 440.0;
@@ -13,8 +12,8 @@ public class GuitarHero {
         GuitarString stringC = new GuitarString(CONCERT_C);
         ArrayDeque<GuitarString> stringArray = new ArrayDeque(37);
         String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
-        for (int i=0;i<37;i++) {
-            stringArray.addLast(new GuitarString(440*Math.pow(2, (i-24)/12.0)));
+        for (int i = 0; i < 37; i++) {
+            stringArray.addLast(new GuitarString(440 * Math.pow(2, (i - 24) / 12.0)));
         }
 //        stringArray.printDeque();
 
@@ -25,7 +24,7 @@ public class GuitarHero {
             if (StdDraw.hasNextKeyTyped()) {
                 char key = StdDraw.nextKeyTyped();
                 int k = keyboard.indexOf(key);
-                if (k>=0) {
+                if (k >= 0) {
                     targetString = stringArray.get(k);
                     targetString.pluck();
                 } else if (key == 'a') {
@@ -34,14 +33,14 @@ public class GuitarHero {
 
             }
             double sample = stringA.sample();
-            for (int i=0;i<37;i++) {
+            for (int i = 0; i < 37; i++) {
                 sample += stringArray.get(i).sample();
             }
 
             StdAudio.play(sample);
 
             stringA.tic();
-            for (int i=0;i<37;i++) {
+            for (int i = 0; i < 37; i++) {
                 stringArray.get(i).tic();
             }
 

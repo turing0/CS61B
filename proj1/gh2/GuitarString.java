@@ -18,7 +18,7 @@ public class GuitarString {
     public GuitarString(double frequency) {
         int capacity = Math.toIntExact(Math.round(SR / frequency));
         buffer = new ArrayDeque<Double>(capacity);
-        for (int i=0;i<capacity;i++) {
+        for (int i = 0;i < capacity; i++) {
             buffer.addLast(0.0);
         }
 
@@ -28,11 +28,11 @@ public class GuitarString {
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
         int cap = buffer.size();
-        for (int i=0;i<cap;i++) {
+        for (int i = 0;i < cap; i++) {
             buffer.removeLast();
         }
         buffer.printDeque();
-        for (int i=0;i<cap;i++) {
+        for (int i = 0; i < cap; i++) {
             double r = Math.random() - 0.5;
             buffer.addLast(r);
         }
@@ -44,11 +44,11 @@ public class GuitarString {
     public void tic() {
         double v1 = buffer.removeFirst();
         double v2 = buffer.get(0);
-        buffer.addLast((v1+v2)/2*DECAY);
+        buffer.addLast((v1 + v2) / 2 * DECAY);
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
-        return 2*buffer.get(0);
+        return 2 * buffer.get(0);
     }
 }

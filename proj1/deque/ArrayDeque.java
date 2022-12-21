@@ -8,7 +8,7 @@ public class ArrayDeque<T> implements Deque<T> {
     public ArrayDeque() {
         array = (T[]) new Object[8];
         capacity = 8;
-        nextFirst = 8/2;
+        nextFirst = 8 / 2;
         nextLast = nextFirst + 1;
         size = 0;
     }
@@ -16,14 +16,14 @@ public class ArrayDeque<T> implements Deque<T> {
     public ArrayDeque(int cap) {
         array = (T[]) new Object[cap];
         capacity = cap;
-        nextFirst = cap/2;
+        nextFirst = cap / 2;
         nextLast = nextFirst + 1;
         size = 0;
     }
 
     private void resize(int cap) {
         T[] newArray = (T[]) new Object[cap];
-        for (int i=0;i<size;i++) {
+        for (int i = 0;i < size; i++) {
             newArray[i] = get(i);
         }
         array = newArray;
@@ -61,7 +61,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void printDeque() {
         if (size > 0) {
-            for(int i=0;i<size;i++) {
+            for(int i = 0; i < size; i++) {
                 T v = get(i);
                 System.out.print(v + " ");
             }
