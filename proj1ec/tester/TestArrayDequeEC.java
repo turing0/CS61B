@@ -68,7 +68,7 @@ public class TestArrayDequeEC {
                     v2 = good.removeLast();
                 }
                 if (v1>=0) {
-                    assertEquals(v1, v2);
+                    assertEquals(msg, v1, v2);
                 }
             }
         }
