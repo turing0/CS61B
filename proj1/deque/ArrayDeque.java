@@ -23,7 +23,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
     private void resize(int cap) {
         T[] newArray = (T[]) new Object[cap];
-        for (int i = 0;i < size; i++) {
+        for (int i = 0; i < size; i++) {
             newArray[i] = get(i);
         }
         array = newArray;
@@ -61,7 +61,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void printDeque() {
         if (size > 0) {
-            for(int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 T v = get(i);
                 System.out.print(v + " ");
             }
@@ -95,8 +95,8 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T get(int index) {
-        if (size>0 && index<size) {
-            return array[(nextFirst + 1 + index)%capacity];
+        if (size > 0 && index < size) {
+            return array[(nextFirst + 1 + index) % capacity];
         }
         return null;
     }

@@ -46,7 +46,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     public void printDeque() {
         if (size > 0) {
             Node p = sentinel;
-            for(int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 p = p.next;
                 System.out.print(p.value + " ");
             }
@@ -82,7 +82,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     public T get(int index) {
         if (index >= 0 && index < size) {
             Node p = sentinel;
-            for(int i = 0; i <= index; i++) {
+            for (int i = 0; i <= index; i++) {
                 p = p.next;
             }
             return p.value;

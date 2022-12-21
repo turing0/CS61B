@@ -18,7 +18,7 @@ public class GuitarString {
     public GuitarString(double frequency) {
         int capacity = Math.toIntExact(Math.round(SR / frequency));
         buffer = new ArrayDeque<Double>(capacity);
-        for (int i = 0;i < capacity; i++) {
+        for (int i = 0; i < capacity; i++) {
             buffer.addLast(0.0);
         }
 
@@ -28,7 +28,7 @@ public class GuitarString {
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
         int cap = buffer.size();
-        for (int i = 0;i < cap; i++) {
+        for (int i = 0; i < cap; i++) {
             buffer.removeLast();
         }
         buffer.printDeque();
