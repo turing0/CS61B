@@ -39,7 +39,7 @@ public class TestArrayDequeEC {
             }
             else if (operationNumber == 3) {
                 // removeFirst
-                int v1=-1, v2=-1;
+                Integer v1=-1, v2=-1;
                 if (bad.size()>0) {
                     v1 = bad.removeFirst();
                     System.out.printf("removeFirst(): %d\n", v1);
@@ -54,7 +54,7 @@ public class TestArrayDequeEC {
             }
             else if (operationNumber == 4) {
                 // removeLast
-                int v1=-1, v2=-1;
+                Integer v1=-1, v2=-1;
                 if (bad.size()>0) {
                     v1 = bad.removeLast();
                     System.out.printf("removeLast(): %d\n", v1);
