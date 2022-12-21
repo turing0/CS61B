@@ -37,6 +37,7 @@ public class TestArrayDequeEC {
                 // size
                 int size = bad.size();
                 int blsize = good.size();
+                msg = msg + "size(): "+size+"\n";
                 assertEquals(msg, blsize, size);
 //                System.out.println("size: " + size);
             }
