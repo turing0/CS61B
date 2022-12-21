@@ -51,8 +51,6 @@ public class TestArrayDequeEC {
                     v2 = good.removeFirst();
                     assertEquals(msg, v2, v1);
                 }
-
-
             }
             else if (operationNumber == 4) {
                 // removeLast
@@ -64,7 +62,6 @@ public class TestArrayDequeEC {
                     v2 = good.removeLast();
                     assertEquals(msg, v2, v1);
                 }
-
             }
         }
 
