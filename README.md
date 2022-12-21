@@ -16,14 +16,14 @@
 拉取作业存储库
 
 ```text
-https://github.com/Berkeley-CS61B/skeleton-sp21
+git clone https://github.com/Berkeley-CS61B/skeleton-sp21
 ```
 
 ## 可能遇到的问题
 
 ### Proj0
 
-如果你的电脑系统是中文，那么在 proj0 的2048游戏界面中按键会没有反应，这是因为是系统是中文的原因，得修改一处代码。
+如果你的电脑系统是中文，那么在 proj0 的 2048 游戏界面中按键会没有反应，这是因为是系统是中文的原因，得修改一处代码。
 
 TL;DR:
 
