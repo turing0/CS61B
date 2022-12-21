@@ -110,7 +110,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private class ArrayDequeIterator implements Iterator<T> {
         private int p;
 
-        public ArrayDequeIterator() {
+        ArrayDequeIterator() {
             p = 0;
         }
 
@@ -126,11 +126,21 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Deque && ((ArrayDeque<?>) o).size == size) {
-
+        if (o == this) {
             return true;
         }
-
+        if (!(o instanceof ArrayDeque)) {
+            return false;
+        }
+        ArrayDeque<?> ao = (ArrayDeque<?>) o;
+        if (ao.size == size) {
+            for (int i = 0; i < size; i++) {
+                if (get(i) != ao.get(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return false;
     }
 
