@@ -43,34 +43,28 @@ public class TestArrayDequeEC {
             }
             else if (operationNumber == 3) {
                 // removeFirst
-                Integer v1=-1, v2=-1;
-                if (bad.size()>0) {
+                if (bad.size()>0 && good.size()>0) {
+                    Integer v1=-1, v2=-1;
                     v1 = bad.removeFirst();
                     msg = msg + "removeFirst(): "+v1+"\n";
 //                    System.out.printf("removeFirst(): %d\n", v1);
-                }
-                if (good.size()>0) {
                     v2 = good.removeFirst();
-                }
-                if (v2>=0) {
                     assertEquals(msg, v2, v1);
                 }
+
 
             }
             else if (operationNumber == 4) {
                 // removeLast
-                Integer v1=-1, v2=-1;
-                if (bad.size()>0) {
+                if (bad.size()>0 && good.size()>0) {
+                    Integer v1=-1, v2=-1;
                     v1 = bad.removeLast();
                     msg = msg + "removeLast(): "+v1+"\n";
 //                    System.out.printf("removeLast(): %d\n", v1);
-                }
-                if (good.size()>0) {
                     v2 = good.removeLast();
-                }
-                if (v2>=0) {
                     assertEquals(msg, v2, v1);
                 }
+
             }
         }
 
