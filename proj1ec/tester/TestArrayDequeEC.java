@@ -16,6 +16,7 @@ public class TestArrayDequeEC {
         ArrayDequeSolution<Integer> good = new ArrayDequeSolution<>();
 
         int N = 500;
+        String msg = "";
         for (int i = 0; i < N; i += 1) {
             int operationNumber = StdRandom.uniform(0, 7);
             if (operationNumber == 0) {
@@ -23,18 +24,20 @@ public class TestArrayDequeEC {
                 int randVal = StdRandom.uniform(0, 100);
                 bad.addLast(randVal);
                 good.addLast(randVal);
-                System.out.printf("addLast(%d)\n", randVal);
+                msg = msg + "addLast("+randVal+")\n";
+//                System.out.printf("addLast(%d)\n", randVal);
             } else if (operationNumber == 1) {
                 // addFirst
                 int randVal = StdRandom.uniform(0, 100);
                 bad.addFirst(randVal);
                 good.addFirst(randVal);
-                System.out.printf("addFirst(%d)\n", randVal);
+                msg = msg + "addFirst("+randVal+")\n";
+//                System.out.printf("addFirst(%d)\n", randVal);
             } else if (operationNumber == 2) {
                 // size
                 int size = bad.size();
                 int blsize = good.size();
-                assertEquals(size, blsize);
+                assertEquals(msg, size, blsize);
 //                System.out.println("size: " + size);
             }
             else if (operationNumber == 3) {
@@ -42,13 +45,14 @@ public class TestArrayDequeEC {
                 Integer v1=-1, v2=-1;
                 if (bad.size()>0) {
                     v1 = bad.removeFirst();
-                    System.out.printf("removeFirst(): %d\n", v1);
+                    msg = msg + "removeFirst(): "+v1+"\n";
+//                    System.out.printf("removeFirst(): %d\n", v1);
                 }
                 if (good.size()>0) {
                     v2 = good.removeFirst();
                 }
                 if (v1>=0) {
-                    assertEquals(v1, v2);
+                    assertEquals(msg, v1, v2);
                 }
 
             }
@@ -57,7 +61,8 @@ public class TestArrayDequeEC {
                 Integer v1=-1, v2=-1;
                 if (bad.size()>0) {
                     v1 = bad.removeLast();
-                    System.out.printf("removeLast(): %d\n", v1);
+                    msg = msg + "removeLast(): "+v1+"\n";
+//                    System.out.printf("removeLast(): %d\n", v1);
                 }
                 if (good.size()>0) {
                     v2 = good.removeLast();
