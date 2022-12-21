@@ -7,11 +7,11 @@ public class GuitarHero {
 
     public static void main(String[] args) {
         String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
-        int KEYS_AMOUNT = keyboard.length();
+        int keysAmount = keyboard.length();
         GuitarString stringA = new GuitarString(CONCERT_A);
-        GuitarString[] stringArray = new GuitarString[KEYS_AMOUNT];
+        GuitarString[] stringArray = new GuitarString[keysAmount];
 
-        for (int i = 0; i < KEYS_AMOUNT; i++) {
+        for (int i = 0; i < keysAmount; i++) {
             stringArray[i] = new GuitarString(440 * Math.pow(2, (i - 24) / 12.0));
         }
 
@@ -29,14 +29,14 @@ public class GuitarHero {
 
             }
             double sample = stringA.sample();
-            for (int i = 0; i < KEYS_AMOUNT; i++) {
+            for (int i = 0; i < keysAmount; i++) {
                 sample += stringArray[i].sample();
             }
 
             StdAudio.play(sample);
 
             stringA.tic();
-            for (int i = 0; i < KEYS_AMOUNT; i++) {
+            for (int i = 0; i < keysAmount; i++) {
                 stringArray[i].tic();
             }
 
