@@ -115,16 +115,16 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         private Node<T> p;
 
         LinkedListDequeIterator() {
-            p = sentinel.next;
+            p = sentinel;
         }
 
         public boolean hasNext() {
-            return p == sentinel;
+            return p.next != sentinel;
         }
 
         public T next() {
-            T v = p.value;
             p = p.next;
+            T v = p.value;
             return v;
         }
     }
