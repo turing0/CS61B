@@ -15,8 +15,8 @@
 
 拉取作业存储库
 
-```text
-git clone https://github.com/Berkeley-CS61B/skeleton-sp21
+```bash
+git clone https://github.com/Berkeley-CS61B/skeleton-sp21.git
 ```
 
 ## 可能遇到的问题
