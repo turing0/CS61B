@@ -63,8 +63,7 @@ public class TestArrayDequeEC {
                     v2 = good.removeLast();
                 }
                 if (v1>=0) {
-                    String msg = "gasdgfasd";
-                    assertEquals(msg, v1, v2);
+                    assertEquals(v1, v2);
                 }
             }
         }
