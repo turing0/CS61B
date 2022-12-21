@@ -17,11 +17,10 @@ public class GuitarString {
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
         int capacity = Math.toIntExact(Math.round(SR / frequency));
-        buffer = new ArrayDeque<Double>(capacity);
+        buffer = new ArrayDeque<Double>();
         for (int i = 0; i < capacity; i++) {
             buffer.addLast(0.0);
         }
-
     }
 
 

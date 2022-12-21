@@ -15,14 +15,6 @@ public class ArrayDeque<T> implements Deque<T> {
         size = 0;
     }
 
-    public ArrayDeque(int cap) {
-        array = (T[]) new Object[cap];
-        capacity = cap;
-        nextFirst = cap / 2;
-        nextLast = nextFirst + 1;
-        size = 0;
-    }
-
     private void resize(int cap) {
         T[] newArray = (T[]) new Object[cap];
         for (int i = 0; i < size; i++) {
