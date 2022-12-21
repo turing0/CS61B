@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
-    private class Node<T> {
-        private T value;
+    private static class Node<T> {
+        private final T value;
         private Node<T> prev, next;
 
         Node(T v, Node<T> p, Node<T> n) {
@@ -15,11 +15,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    private Node<T> sentinel;
+    private final Node<T> sentinel;
     private int size;
 
     public LinkedListDeque() {
-        sentinel = new Node(null, null, null);
+        sentinel = new Node<>(null, null, null);
         sentinel.prev = sentinel;
         sentinel.next = sentinel;
         size = 0;
@@ -47,7 +47,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public void printDeque() {
         if (size > 0) {
-            Node p = sentinel;
+            Node<T> p = sentinel;
             for (int i = 0; i < size; i++) {
                 p = p.next;
                 System.out.print(p.value + " ");
@@ -138,10 +138,8 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
         LinkedListDeque<?> lo = (LinkedListDeque<?>) o;
         if (lo.size == size) {
-            Iterator<T> it1 = iterator();
-            Iterator<T> it2 = (Iterator<T>) lo.iterator();
-            while (it1.hasNext()) {
-                if (it1.next() != it2.next()) {
+            for (int i = 0; i < size; i++) {
+                if (lo.get(i) != get(i)) {
                     return false;
                 }
             }
