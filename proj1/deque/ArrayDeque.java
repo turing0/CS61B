@@ -63,6 +63,12 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         System.out.println();
     }
 
+    private void shrinkSize() {
+        if (size < array.length / 4 && size > 4) {
+            resize(size * 2);
+        }
+    }
+
     @Override
     public T removeFirst() {
         if (size > 0) {
@@ -70,6 +76,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             T v = array[i];
             nextFirst = i;
             size -= 1;
+            shrinkSize();
             return v;
         }
         return null;
@@ -82,6 +89,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             T v = array[i];
             nextLast = i;
             size -= 1;
+            shrinkSize();
             return v;
         }
         return null;
@@ -121,7 +129,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof ArrayDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
         ArrayDeque<?> ao = (ArrayDeque<?>) o;
@@ -135,6 +143,5 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         return false;
     }
-
 
 }
