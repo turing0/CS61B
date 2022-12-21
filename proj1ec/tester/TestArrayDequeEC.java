@@ -37,7 +37,7 @@ public class TestArrayDequeEC {
                 // size
                 int size = bad.size();
                 int blsize = good.size();
-                assertEquals(msg, size, blsize);
+                assertEquals(msg, blsize, size);
 //                System.out.println("size: " + size);
             }
             else if (operationNumber == 3) {
@@ -51,8 +51,8 @@ public class TestArrayDequeEC {
                 if (good.size()>0) {
                     v2 = good.removeFirst();
                 }
-                if (v1>=0) {
-                    assertEquals(msg, v1, v2);
+                if (v2>=0) {
+                    assertEquals(msg, v2, v1);
                 }
 
             }
@@ -67,8 +67,8 @@ public class TestArrayDequeEC {
                 if (good.size()>0) {
                     v2 = good.removeLast();
                 }
-                if (v1>=0) {
-                    assertEquals(msg, v1, v2);
+                if (v2>=0) {
+                    assertEquals(msg, v2, v1);
                 }
             }
         }
