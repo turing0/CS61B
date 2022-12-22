@@ -15,7 +15,7 @@ public class TestArrayDequeEC {
         StudentArrayDeque<Integer> bad = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> good = new ArrayDequeSolution<>();
 
-        int N = 50;
+        int N = 25;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
             int operationNumber = StdRandom.uniform(0, 2);
