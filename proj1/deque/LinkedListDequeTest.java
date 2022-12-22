@@ -151,9 +151,5 @@ public class LinkedListDequeTest {
         assertEquals(1.0, (double) lld.removeLast(), 0.0);
 
 
-//        assertEquals("Should have the same value", i, (double) lld.removeLast(), 0.0);
-
-
-
     }
 }
