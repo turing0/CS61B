@@ -56,6 +56,8 @@ public class TestArrayDequeEC {
                     assertEquals(msg, item2, item1);
                 }
             }
+            msg += ("size()\n");
+            assertEquals(msg, good.size(), bad.size());
         }
 
 
