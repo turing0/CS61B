@@ -33,27 +33,6 @@ public class TestArrayDequeEC {
                 good.addFirst(randVal);
                 msg = msg + "addFirst("+randVal+")\n";
 //                System.out.printf("addFirst(%d)\n", randVal);
-            } else if (operationNumber == 2) {
-                // removeFirst
-                if (bad.size()>0 && good.size()>0) {
-                    Integer v1=-1, v2=-1;
-                    v1 = bad.removeFirst();
-                    msg = msg + "removeFirst(): "+v1+"\n";
-//                    System.out.printf("removeFirst(): %d\n", v1);
-                    v2 = good.removeFirst();
-                    assertEquals(msg, v2, v1);
-                }
-            }
-            else if (operationNumber == 3) {
-                // removeLast
-                if (bad.size()>0 && good.size()>0) {
-                    Integer v1=-1, v2=-1;
-                    v1 = bad.removeLast();
-                    msg = msg + "removeLast(): "+v1+"\n";
-//                    System.out.printf("removeLast(): %d\n", v1);
-                    v2 = good.removeLast();
-                    assertEquals(msg, v2, v1);
-                }
             }
         }
         int size = bad.size();
