@@ -18,16 +18,14 @@ public class TestArrayDequeEC {
         int N = 20;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 2);
-            if (operationNumber == 0) {
+            double operationNumber = StdRandom.uniform();
+            if (operationNumber < 0.5) {
                 // addLast
-                int randVal = StdRandom.uniform(0, 100);
                 bad.addLast(i);
                 good.addLast(i);
                 msg = msg + "addLast("+i+")\n";
-            } else if (operationNumber == 1) {
+            } else {
                 // addFirst
-                int randVal = StdRandom.uniform(0, 100);
                 bad.addFirst(i);
                 good.addFirst(i);
                 msg = msg + "addFirst("+i+")\n";
@@ -40,8 +38,8 @@ public class TestArrayDequeEC {
         assertEquals(msg, blsize, size);
 
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 2);
-            if (operationNumber == 0) {
+            double operationNumber = StdRandom.uniform();
+            if (operationNumber < 0.5) {
                 // removeFirst
                 if (bad.size()>0 && good.size()>0) {
                     Integer item1 = bad.removeFirst();
@@ -49,8 +47,7 @@ public class TestArrayDequeEC {
                     msg += ("removeFirst()\n");
                     assertEquals(msg, item2, item1);
                 }
-            }
-            else if (operationNumber == 1) {
+            } else {
                 // removeLast
                 if (bad.size()>0 && good.size()>0) {
                     Integer item1 = bad.removeLast();
