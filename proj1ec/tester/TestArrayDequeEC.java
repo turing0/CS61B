@@ -15,10 +15,10 @@ public class TestArrayDequeEC {
         StudentArrayDeque<Integer> bad = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> good = new ArrayDequeSolution<>();
 
-        int N = 250;
+        int N = 20;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 5);
+            int operationNumber = StdRandom.uniform(0, 2);
             if (operationNumber == 0) {
                 // addLast
                 int randVal = StdRandom.uniform(0, 100);
@@ -31,14 +31,17 @@ public class TestArrayDequeEC {
                 bad.addFirst(i);
                 good.addFirst(i);
                 msg = msg + "addFirst("+i+")\n";
-            } else if (operationNumber == 2) {
-                // size
-                int size = bad.size();
-                int blsize = good.size();
-                msg = msg + "size(): "+size+"\n";
-                assertEquals(msg, blsize, size);
             }
-            else if (operationNumber == 3) {
+        }
+
+        int size = bad.size();
+        int blsize = good.size();
+        msg = msg + "size(): "+size+"\n";
+        assertEquals(msg, blsize, size);
+
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 2);
+            if (operationNumber == 0) {
                 // removeFirst
                 if (bad.size()>0 && good.size()>0) {
                     Integer item1 = bad.removeFirst();
@@ -47,7 +50,7 @@ public class TestArrayDequeEC {
                     assertEquals(msg, item2, item1);
                 }
             }
-            else if (operationNumber == 4) {
+            else if (operationNumber == 1) {
                 // removeLast
                 if (bad.size()>0 && good.size()>0) {
                     Integer item1 = bad.removeLast();
