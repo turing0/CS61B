@@ -19,7 +19,7 @@
 
 2. 使用 Git 的 `git clone` 命令 把该储存库拉去到本地
 
-   ```
+   ```bash
    cd https://github.com/turing0/CS61B.git
    ```
 
