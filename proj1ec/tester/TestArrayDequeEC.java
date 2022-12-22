@@ -18,18 +18,18 @@ public class TestArrayDequeEC {
         int N = 50;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
-            Integer operationNumber = StdRandom.uniform(0, 5);
+            int operationNumber = StdRandom.uniform(0, 5);
             if (operationNumber == 0) {
                 // addLast
                 int randVal = StdRandom.uniform(0, 100);
-                bad.addLast(randVal);
-                good.addLast(randVal);
-                msg = msg + "addLast("+randVal+")\n";
+                bad.addLast(i);
+                good.addLast(i);
+                msg = msg + "addLast("+i+")\n";
             } else if (operationNumber == 1) {
                 // addFirst
                 int randVal = StdRandom.uniform(0, 100);
-                bad.addFirst(randVal);
-                good.addFirst(randVal);
+                bad.addFirst(i);
+                good.addFirst(i);
                 msg = msg + "addFirst("+randVal+")\n";
             } else if (operationNumber == 2) {
                 // size
