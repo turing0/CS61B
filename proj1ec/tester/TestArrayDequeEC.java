@@ -61,7 +61,7 @@ public class TestArrayDequeEC {
         msg = msg + "size(): "+size+"\n";
         assertEquals(msg, blsize, size);
 
-        for (int i = 0; i < N; i += 1) {
+        for (int i = 1; i < N; i += 1) {
             int operationNumber = StdRandom.uniform(0, 2);
             if (operationNumber == 0) {
                 // removeFirst
