@@ -54,7 +54,7 @@ public class TestArrayDequeEC {
                 msg = msg + "removeLast(): "+v1+"\n";
                 assertEquals(msg, v2, v1);
             }
-            msg += ("size()\n");
+            msg = msg + "size(): "+size+"\n";
             assertEquals(msg, good.size(), bad.size());
         }
 
