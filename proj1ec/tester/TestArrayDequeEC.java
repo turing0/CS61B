@@ -12,49 +12,43 @@ public class TestArrayDequeEC {
 
     @Test
     public void randomizedTest() {
-        StudentArrayDeque<Integer> bad = new StudentArrayDeque<>();
-        ArrayDequeSolution<Integer> good = new ArrayDequeSolution<>();
+        StudentArrayDeque<Integer> sad1 = new StudentArrayDeque<>();
+        ArrayDequeSolution<Integer> sad2 = new ArrayDequeSolution<>();
+        String errString = new String();
 
-        int N = 1000;
-        String msg = "";
-        for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 5);
-            if (operationNumber == 0) {
-                // addLast
-                int randVal = StdRandom.uniform(0, 100);
-                bad.addLast(randVal);
-                good.addLast(randVal);
-                msg = msg + "addLast("+randVal+")\n";
-            } else if (operationNumber == 1) {
-                // addFirst
-                int randVal = StdRandom.uniform(0, 100);
-                bad.addFirst(randVal);
-                good.addFirst(randVal);
-                msg = msg + "addFirst("+randVal+")\n";
-            } else if (operationNumber == 2) {
-                // size
-                int size = bad.size();
-                int blsize = good.size();
-                msg = msg + "size(): "+size+"\n";
-                assertEquals(msg, blsize, size);
-//                System.out.println("size: " + size);
-            } else if (operationNumber == 3) {
-                // removeFirst
-                if (bad.size()>0 && good.size()>0) {
-//                    msg = msg + "removeFirst(): "+v1+"\n";
-                    msg = msg + "removeFirst()\n";
-                    assertEquals(msg, good.removeFirst(), bad.removeFirst());
-                }
-            } else if (operationNumber == 4) {
-                // removeLast
-                if (bad.size()>0 && good.size()>0) {
-//                    msg = msg + "removeLast(): "+v1+"\n";
-                    msg = msg + "removeLast()\n";
-                    assertEquals(msg, good.removeLast(), bad.removeLast());
-                }
+        for (int i = 0; i < 100; i += 1) {
+            double numberBetweenZeroAndOne = StdRandom.uniform();
+
+            if (numberBetweenZeroAndOne < 0.5) {
+                sad1.addLast(i);
+                sad2.addLast(i);
+                errString += ("addLast(" + i + ")\n");
+            } else {
+                sad1.addFirst(i);
+                sad2.addFirst(i);
+                errString += ("addFirst(" + i + ")\n");
             }
         }
 
-    }
+        errString += ("size()\n");
+        assertEquals(errString, sad2.size(), sad1.size());
 
+        for (int i = 0; i < 100; i += 1) {
+            double numberBetweenZeroAndOne = StdRandom.uniform();
+
+            if (numberBetweenZeroAndOne < 0.5) {
+                Integer item1 = sad1.removeLast();
+                Integer item2 = sad2.removeLast();
+                errString += ("removeLast()\n");
+                assertEquals(errString, item2, item1);
+            } else {
+                Integer item1 = sad1.removeFirst();
+                Integer item2 = sad2.removeFirst();
+                errString += ("removeFirst()\n");
+                assertEquals(errString, item2, item1);
+            }
+            errString += ("size()\n");
+            assertEquals(errString, sad2.size(), sad1.size());
+        }
+    }
 }
