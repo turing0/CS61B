@@ -3,6 +3,8 @@
 
 课程主页：https://sp21.datastructur.es/
 
+UC berkeley CS Course Map：https://hkn.eecs.berkeley.edu/courseguides
+
 ## 开始教程
 
 注册 [gradescope](https://www.gradescope.com/) 来使用 autograder
