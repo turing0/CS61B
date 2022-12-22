@@ -29,19 +29,19 @@
    cd CS61B
    ```
 
-4.  运行该命令
+4. 运行此命令
 
    ```bash
    git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
    ```
 
-5. 运行该命令
+5. 运行此命令
 
    ```bash
    git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
    ```
 
-   ## 
+    
 
 ## 可能遇到的问题
 
