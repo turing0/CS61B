@@ -139,7 +139,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         Deque<?> ao = (Deque<?>) o;
         if (ao.size() == size) {
             for (int i = 0; i < size; i++) {
-                if (get(i) != ao.get(i)) {
+                if (!(get(i).equals(ao.get(i)))) {
                     return false;
                 }
             }
