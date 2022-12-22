@@ -18,17 +18,16 @@ public class TestArrayDequeEC {
         int N = 20;
         String msg = "";
         for (int i = 0; i < N; i += 1) {
-            double operationNumber = StdRandom.uniform();
-            if (operationNumber < 0.5) {
-                // addLast
+            double numberBetweenZeroAndOne = StdRandom.uniform();
+
+            if (numberBetweenZeroAndOne < 0.5) {
                 bad.addLast(i);
                 good.addLast(i);
-                msg = msg + "addLast("+i+")\n";
+                msg += ("addLast(" + i + ")\n");
             } else {
-                // addFirst
                 bad.addFirst(i);
                 good.addFirst(i);
-                msg = msg + "addFirst("+i+")\n";
+                msg += ("addFirst(" + i + ")\n");
             }
         }
 
@@ -38,23 +37,18 @@ public class TestArrayDequeEC {
         assertEquals(msg, blsize, size);
 
         for (int i = 0; i < N; i += 1) {
-            double operationNumber = StdRandom.uniform();
-            if (operationNumber < 0.5) {
-                // removeFirst
-                if (bad.size()>0 && good.size()>0) {
-                    Integer item1 = bad.removeFirst();
-                    Integer item2 = good.removeFirst();
-                    msg += ("removeFirst()\n");
-                    assertEquals(msg, item2, item1);
-                }
+            double numberBetweenZeroAndOne = StdRandom.uniform();
+
+            if (numberBetweenZeroAndOne < 0.5) {
+                Integer item1 = bad.removeLast();
+                Integer item2 = good.removeLast();
+                msg += ("removeLast()\n");
+                assertEquals(msg, item2, item1);
             } else {
-                // removeLast
-                if (bad.size()>0 && good.size()>0) {
-                    Integer item1 = bad.removeLast();
-                    Integer item2 = good.removeLast();
-                    msg += ("removeLast()\n");
-                    assertEquals(msg, item2, item1);
-                }
+                Integer item1 = bad.removeFirst();
+                Integer item2 = good.removeFirst();
+                msg += ("removeFirst()\n");
+                assertEquals(msg, item2, item1);
             }
             msg += ("size()\n");
             assertEquals(msg, good.size(), bad.size());
