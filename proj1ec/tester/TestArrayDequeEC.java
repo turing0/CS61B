@@ -30,7 +30,7 @@ public class TestArrayDequeEC {
                 int randVal = StdRandom.uniform(0, 100);
                 bad.addFirst(i);
                 good.addFirst(i);
-                msg = msg + "addFirst("+randVal+")\n";
+                msg = msg + "addFirst("+i+")\n";
             } else if (operationNumber == 2) {
                 // size
                 int size = bad.size();
@@ -41,21 +41,19 @@ public class TestArrayDequeEC {
             else if (operationNumber == 3) {
                 // removeFirst
                 if (bad.size()>0 && good.size()>0) {
-                    Integer v1=-1, v2=-1;
-                    v1 = bad.removeFirst();
-                    msg = msg + "removeFirst(): "+v1+"\n";
-                    v2 = good.removeFirst();
-                    assertEquals(msg, v2, v1);
+                    Integer item1 = bad.removeFirst();
+                    Integer item2 = good.removeFirst();
+                    msg += ("removeFirst()\n");
+                    assertEquals(msg, item2, item1);
                 }
             }
             else if (operationNumber == 4) {
                 // removeLast
                 if (bad.size()>0 && good.size()>0) {
-                    Integer v1=-1, v2=-1;
-                    v1 = bad.removeLast();
-                    msg = msg + "removeLast(): "+v1+"\n";
-                    v2 = good.removeLast();
-                    assertEquals(msg, v2, v1);
+                    Integer item1 = bad.removeLast();
+                    Integer item2 = good.removeLast();
+                    msg += ("removeLast()\n");
+                    assertEquals(msg, item2, item1);
                 }
             }
         }
