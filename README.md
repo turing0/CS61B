@@ -5,7 +5,7 @@
 
 ## 开始教程
 
-注册 gradescope 来使用 autograder
+注册 [gradescope](https://www.gradescope.com/) 来使用 autograder
 
 1. 课程入门代码：MB7ZPY
 
@@ -15,9 +15,33 @@
 
 拉取作业存储库
 
-```bash
-git clone https://github.com/Berkeley-CS61B/skeleton-sp21.git
-```
+1. 创建一个 Github 仓库
+
+2. 使用 Git 的 `git clone` 命令 把该储存库拉去到本地
+
+   ```
+   cd https://github.com/turing0/CS61B.git
+   ```
+
+3. 用 cd 命令进入到本地刚创建的存储库目录下
+
+   ```bash
+   cd CS61B
+   ```
+
+4.  运行该命令
+
+   ```bash
+   git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
+   ```
+
+5. 运行该命令
+
+   ```bash
+   git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
+   ```
+
+   ## 
 
 ## 可能遇到的问题
 
