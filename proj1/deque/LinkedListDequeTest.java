@@ -136,4 +136,24 @@ public class LinkedListDequeTest {
 
 
     }
+
+    @Test
+    public void OwnLLDequeTest() {
+
+        LinkedListDeque<Integer> lld = new LinkedListDeque<Integer>();
+        lld.addFirst(0);
+        assertEquals(0.0, (double) lld.get(0), 0.0);
+        assertEquals(0.0, (double) lld.removeLast(), 0.0);
+
+        lld.addFirst(1);
+        lld.addFirst(2);
+        assertEquals(2.0, (double) lld.get(0), 0.0);
+        assertEquals(1.0, (double) lld.removeLast(), 0.0);
+
+
+//        assertEquals("Should have the same value", i, (double) lld.removeLast(), 0.0);
+
+
+
+    }
 }
