@@ -44,18 +44,16 @@ public class TestArrayDequeEC {
             double operationNumber = StdRandom.uniform();
             if (operationNumber < 0.5) {
                 // removeFirst
-                Integer v1=-1, v2=-1;
-                v1 = bad.removeFirst();
+                Integer v1=bad.removeFirst();
+                Integer v2=good.removeFirst();
                 msg = msg + "removeFirst(): "+v1+"\n";
-                v2 = good.removeFirst();
                 assertEquals(msg, v2, v1);
             }
             else {
                 // removeLast
-                Integer v1=-1, v2=-1;
-                v1 = bad.removeLast();
+                Integer v1=bad.removeLast();
+                Integer v2=good.removeLast();
                 msg = msg + "removeLast(): "+v1+"\n";
-                v2 = good.removeLast();
                 assertEquals(msg, v2, v1);
 
             }
