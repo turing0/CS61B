@@ -25,14 +25,12 @@ public class TestArrayDequeEC {
                 bad.addLast(randVal);
                 good.addLast(randVal);
                 msg = msg + "addLast("+randVal+")\n";
-//                System.out.printf("addLast(%d)\n", randVal);
             } else {
                 // addFirst
                 int randVal = StdRandom.uniform(0, 100);
                 bad.addFirst(randVal);
                 good.addFirst(randVal);
                 msg = msg + "addFirst("+randVal+")\n";
-//                System.out.printf("addFirst(%d)\n", randVal);
             }
         }
         int size = bad.size();
@@ -55,7 +53,6 @@ public class TestArrayDequeEC {
                 Integer v2=good.removeLast();
                 msg = msg + "removeLast(): "+v1+"\n";
                 assertEquals(msg, v2, v1);
-
             }
         }
 
