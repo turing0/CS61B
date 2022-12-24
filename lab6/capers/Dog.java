@@ -59,10 +59,10 @@ public class Dog implements Serializable{ // TODO
      */
     public void saveDog() {
         // TODO (hint: don't forget dog names are unique)
-        File dogFile = new File(DOG_FOLDER.getPath(), name);
+        File dogFile = new File(DOG_FOLDER, name);
         try {
             dogFile.createNewFile();
-            writeObject(dogFile, this.getClass());
+            writeObject(dogFile, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
