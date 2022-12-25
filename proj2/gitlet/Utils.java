@@ -59,7 +59,7 @@ class Utils {
 
     /** Returns the SHA-1 hash of the concatenation of the strings in
      *  VALS. */
-    static String sha1(List<Object> vals) {
+    static String sha1(List<? extends Object> vals) {
         return sha1(vals.toArray(new Object[vals.size()]));
     }
 
@@ -235,5 +235,38 @@ class Utils {
     static void message(String msg, Object... args) {
         System.out.printf(msg, args);
         System.out.println();
+    }
+
+    /* OWN FUNCTIONS */
+    public static String getFileSha1(String fileName) {
+        File file = new File(fileName);
+        String contents = readContentsAsString(file);
+        return sha1(fileName, contents);
+    }
+
+    public static void validateNumArgs(String cmd, String[] args, int n) {
+        if (args.length != n) {
+            throw new RuntimeException(
+                    String.format("Invalid number of arguments for: %s.", cmd));
+        }
+    }
+
+    public static void validateMessage(String[] args) {
+        if (args.length < 2 || args[1].equals("")) {
+            exitWithError("Please enter a commit message.");
+        }
+    }
+
+    public static void exitWithError(String message) {
+        if (message != null && !message.equals("")) {
+            System.out.println(message);
+        }
+        System.exit(-1);
+    }
+    public static void exitWithSuccess(String message) {
+        if (message != null && !message.equals("")) {
+            System.out.println(message);
+        }
+        System.exit(0);
     }
 }
