@@ -8,13 +8,24 @@ import static gitlet.Utils.*;
 
 public class Addition implements Serializable {
     private Map<String, String> mp;
+//    private Map<String, String> removalMap;
+    private List<String> removalList;
 
     public Addition() {
         mp = new HashMap<>();
+        removalList = new ArrayList<>();
     }
 
     public Set<String> getKeySet() {
         return mp.keySet();
+    }
+
+    public List<String> getRemovalList() {
+        return removalList;
+    }
+
+    public void stageToRemoval(String fileName) {
+        removalList.add(fileName);
     }
 
     public void addAndSave(String fileName, String blobid) {
@@ -24,6 +35,10 @@ public class Addition implements Serializable {
 
     public String get(String key) {
         return mp.get(key);
+    }
+
+    public void remove(String key) {
+        mp.remove(key);
     }
     public int size() {
         return mp.size();

@@ -3,8 +3,6 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
-import java.text.*;
-
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.

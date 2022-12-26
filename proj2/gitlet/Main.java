@@ -33,6 +33,9 @@ public class Main {
                 String msg = args[1];
                 Repository.handleCommit(msg);
                 break;
+            case "rm":
+                Repository.handleRm(args);
+                break;
             case "branch":
                 Repository.handleBranch(args);
                 break;

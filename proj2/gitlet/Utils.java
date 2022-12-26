@@ -220,7 +220,6 @@ class Utils {
     }
 
 
-
     /* MESSAGES AND ERROR REPORTING */
 
     /** Return a GitletException whose message is composed from MSG and ARGS as
@@ -256,12 +255,6 @@ class Utils {
         }
     }
 
-//    public static void exitWithError(String message) {
-//        if (message != null && !message.equals("")) {
-//            System.out.println(message);
-//        }
-//        System.exit(-1);
-//    }
     public static void exitWithSuccess(String message) {
         if (message != null && !message.equals("")) {
             System.out.println(message);
@@ -319,7 +312,7 @@ class Utils {
         if (id == null) {
             return null;
         }
-        File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
+        File filePath = join(Repository.OBJECT_DIR, id.substring(0, 2));
         if (filePath.exists()) {
             File file = join(filePath, id.substring(2));
             if (file.exists()) {
@@ -329,7 +322,7 @@ class Utils {
         return null;
     }
     public static void createObjectFile(String id, Serializable obj) {
-        File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
+        File filePath = join(Repository.OBJECT_DIR, id.substring(0, 2));
         if (!filePath.exists()) {
             filePath.mkdir();
         }
@@ -346,7 +339,7 @@ class Utils {
         if (id.length() == 40) {
             return id;
         }
-        File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
+        File filePath = join(Repository.OBJECT_DIR, id.substring(0, 2));
         if (filePath.exists()) {
             for (File f : filePath.listFiles()) {
                 if (f.getName().substring(0, id.length() - 2).equals(id.substring(2))) {

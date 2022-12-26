@@ -27,7 +27,7 @@ public class Repository {
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
     public static final File ADDITION_FILE = join(STAGINGAREA_DIR, "ADDITION");
     public static final File REMOVAL_FILE = join(STAGINGAREA_DIR, "REMOVAL");
-    public static final File BLOB_DIR = join(GITLET_DIR, "objects");
+    public static final File OBJECT_DIR = join(GITLET_DIR, "objects");
     public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
@@ -38,7 +38,7 @@ public class Repository {
             GITLET_DIR.mkdir();
             STAGINGAREA_DIR.mkdir();
             BRANCH_DIR.mkdirs();
-            BLOB_DIR.mkdir();
+            OBJECT_DIR.mkdir();
             Addition ad = new Addition();
             ad.saveAddition();
             try {
@@ -80,7 +80,9 @@ public class Repository {
         System.out.println();
         // Removed Files
         System.out.printf("=== Removed Files ===\n");
-        // TODO
+        for (String filaName : ad.getRemovalList()) {
+            System.out.printf("%s\n", filaName);
+        }
         System.out.println();
 
         // Modifications Not Staged For Commit
@@ -145,6 +147,26 @@ public class Repository {
         // update branch
         writeContents(getBranchFile(), newCm.getID());
 
+    }
+
+    public static void handleRm(String[] args) {
+        validateGitletDirectory();
+        String fileName = args[1];
+        Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
+        if (ad.get(fileName) != null) {
+            ad.remove(fileName);
+            return ;
+        }
+        Commit cm = Commit.fromFile(getBranchFile());
+        if (cm.getFileMap().containsKey(fileName)) {
+            ad.stageToRemoval(fileName);
+            File file = join(CWD, fileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            return ;
+        }
+        exitWithSuccess("No reason to remove the file.");
     }
 
     public static void handleBranch(String[] args) {
