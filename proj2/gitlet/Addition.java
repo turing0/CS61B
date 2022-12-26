@@ -58,6 +58,7 @@ public class Addition implements Serializable {
 
     public void clearAndSave() {
         mp = new HashMap<>();
+        removalList = new ArrayList<>();
         saveAddition();
     }
 

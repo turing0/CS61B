@@ -6,7 +6,7 @@ import java.util.*;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
+ *  It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
  *  @author Turing

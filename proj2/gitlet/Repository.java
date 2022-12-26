@@ -101,16 +101,20 @@ public class Repository {
         if (!join(CWD, fileName).exists()) {
             exitWithSuccess("File does not exist.");
         }
-
         Commit cm = Commit.fromFile(getBranchFile());
 
         if (cm.getFileMap() != null && cm.getFileMap().get(fileName) != null) {
+            Addition ad = Addition.fromFile(ADDITION_FILE);
+            if (ad.getRemovalList().contains(fileName)) {
+                ad.clearAndSave();
+                return;
+            }
             String targetBlobID = cm.getFileMap().get(fileName);
             if (getFileSha1(fileName).equals(targetBlobID)) {
                 exitWithSuccess("");
             } else {
                 String blid = makeBlob(fileName);
-                Addition ad = Addition.fromFile(ADDITION_FILE);
+//                Addition ad = Addition.fromFile(ADDITION_FILE);
                 ad.addAndSave(fileName, blid);
                 // TODO: remove it from the staging area if it is already there
                 //  (as can happen when a file is changed, added, and then changed back to it’s original version).
