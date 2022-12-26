@@ -26,6 +26,7 @@ public class Addition implements Serializable {
 
     public void stageToRemoval(String fileName) {
         removalList.add(fileName);
+        saveAddition();
     }
 
     public void addAndSave(String fileName, String blobid) {
@@ -39,6 +40,7 @@ public class Addition implements Serializable {
 
     public void remove(String key) {
         mp.remove(key);
+        saveAddition();
     }
     public int size() {
         return mp.size();

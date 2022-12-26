@@ -155,7 +155,7 @@ public class Repository {
         Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
         if (ad.get(fileName) != null) {
             ad.remove(fileName);
-            return ;
+            return;
         }
         Commit cm = Commit.fromFile(getBranchFile());
         if (cm.getFileMap().containsKey(fileName)) {
@@ -164,7 +164,7 @@ public class Repository {
             if (file.exists()) {
                 file.delete();
             }
-            return ;
+            return;
         }
         exitWithSuccess("No reason to remove the file.");
     }
