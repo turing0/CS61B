@@ -31,19 +31,21 @@ public class Commit implements Serializable {
         if (cm == null) {
             timestamp = getDate(0);
             parent = null;
-            fileMap = null;
-            List<String> ls = new ArrayList<>();
+//            fileMap = null;
+            fileMap = new HashMap<>();
+            List<String> ls = new ArrayList<>(fileMap.values());
             ls.add(message);
             ls.add(timestamp);
             id = sha1(ls);
         } else {
             timestamp = getDate();
             parent = cm.getID();
-            if (cm.getFileMap() == null) {
-                fileMap = new HashMap<>();
-            } else {
-                fileMap = new HashMap<>(cm.getFileMap());
-            }
+            fileMap = new HashMap<>(cm.getFileMap());
+//            if (cm.getFileMap() == null) {
+//                fileMap = new HashMap<>();
+//            } else {
+//                fileMap = new HashMap<>(cm.getFileMap());
+//            }
             id = cm.getID();
         }
     }
@@ -56,7 +58,11 @@ public class Commit implements Serializable {
         if (id == null) {
             return null;
         }
-        return readObject(getObjectFile(id), Commit.class);
+        File objectFile = getObjectFile(id);
+        if (objectFile == null) {
+            return null;
+        }
+        return readObject(objectFile, Commit.class);
     }
     public static Commit fromFile(File f) {
         String id = readContentsAsString(f);
