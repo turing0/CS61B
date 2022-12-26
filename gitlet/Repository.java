@@ -27,9 +27,12 @@ public class Repository {
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
     public static final File ADDITION_FILE = join(STAGINGAREA_DIR, "ADDITION");
     public static final File REMOVAL_FILE = join(STAGINGAREA_DIR, "REMOVAL");
-    public static final File BLOB_DIR = join(GITLET_DIR, "objects");
+    public static final File COMMIT_DIR = join(GITLET_DIR, "commits");
+    public static final File BLOB_DIR = join(GITLET_DIR, "blobs");
     public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
+
+    /* TODO: fill in the rest of this class. */
 
     public static void handleInit() {
         if (GITLET_DIR.exists()) {
@@ -38,6 +41,7 @@ public class Repository {
             GITLET_DIR.mkdir();
             STAGINGAREA_DIR.mkdir();
             BRANCH_DIR.mkdirs();
+            COMMIT_DIR.mkdir();
             BLOB_DIR.mkdir();
             Addition ad = new Addition();
             ad.saveAddition();
