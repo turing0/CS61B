@@ -3,20 +3,16 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
-
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
+ *  It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author Turing
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
      *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -176,7 +172,8 @@ public class Repository {
         String branchName = args[1];
         if (!join(BRANCH_DIR, branchName).exists()) {
             exitWithError("A branch with that name does not exist.");
-        }if (getCurrentBranchName().equals(branchName)) {
+        }
+        if (getCurrentBranchName().equals(branchName)) {
             exitWithError("Cannot remove the current branch.");
         }
 
@@ -203,7 +200,7 @@ public class Repository {
                 }
                 // TODO:  If a working file is untracked in the current branch
                 //  and would be overwritten by the checkout,
-                if (1!=1) {
+                if (1 != 1) {
                     exitWithError("There is an untracked file in the way; delete it, or add and commit it first.");
                 }
                 if (readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
@@ -231,7 +228,8 @@ public class Repository {
                     // update HEAD
                     updateHEAD(branchName);
                 }
-
+                break;
+            default:
                 break;
         }
 
@@ -262,6 +260,23 @@ public class Repository {
         return bl.getID();
     }
 
+
+    public static void handleFind(String[] args) {
+        validateGitletDirectory();
+        String msg = args[1];
+        Commit cm = Commit.fromFile(getBranchFile());
+        boolean findFlag = false;
+        while (cm != null) {
+            if (cm.getMessage().equals(msg)) {
+                findFlag = true;
+                System.out.println(cm.getID());
+            }
+            cm = Commit.fromID(cm.getParentID());
+        }
+        if (!findFlag) {
+            exitWithError("Found no commit with that message.");
+        }
+    }
     public static void handleLog() {
         validateGitletDirectory();
 

@@ -42,6 +42,9 @@ public class Main {
             case "checkout":
                 Repository.handleCheckout(args);
                 break;
+            case "find":
+                Repository.handleFind(args);
+                break;
             case "log":
                 // TODO: handle the `log` command
                 Repository.handleLog();
