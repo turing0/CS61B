@@ -48,7 +48,6 @@ public class Repository {
             try {
                 MASTER_FILE.createNewFile();
                 HEAD_FILE.createNewFile();
-//                ADDITION_FILE.createNewFile();
 //                REMOVAL_FILE.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -220,11 +219,14 @@ public class Repository {
                         }
                     }
                     // case: new file -> create
-                    for (String fileName : targetCm.getFileMap().keySet()) {
-                        if (curCm.getFileBlobID(fileName) == null) {
-                            fileCheckout(fileName, targetCm.getID());
+                    if (targetCm.getFileMap() != null) {
+                        for (String fileName : targetCm.getFileMap().keySet()) {
+                            if (curCm.getFileBlobID(fileName) == null) {
+                                fileCheckout(fileName, targetCm.getID());
+                            }
                         }
                     }
+
                     // update HEAD
                     updateHEAD(branchName);
                 }
@@ -259,7 +261,6 @@ public class Repository {
         bl.saveBlob();
         return bl.getID();
     }
-
 
     public static void handleFind(String[] args) {
         validateGitletDirectory();

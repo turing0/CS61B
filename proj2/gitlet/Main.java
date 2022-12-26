@@ -46,7 +46,6 @@ public class Main {
                 Repository.handleFind(args);
                 break;
             case "log":
-                // TODO: handle the `log` command
                 Repository.handleLog();
                 break;
             default:
