@@ -31,8 +31,8 @@ public class Repository {
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
     public static final File ADDITION_FILE = join(STAGINGAREA_DIR, "ADDITION");
     public static final File REMOVAL_FILE = join(STAGINGAREA_DIR, "REMOVAL");
-    public static final File COMMIT_DIR = join(GITLET_DIR, "commit");
-    public static final File BLOB_DIR = join(GITLET_DIR, "blob");
+    public static final File COMMIT_DIR = join(GITLET_DIR, "commits");
+    public static final File BLOB_DIR = join(GITLET_DIR, "blobs");
     public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
@@ -71,15 +71,14 @@ public class Repository {
         validateGitletDirectory();
         // Branches
         String curBranch = getCurrentBranchName();
-        System.out.printf("=== Branches ===\n*%s\n", curBranch);
-        // TODO: output remain branches
+        System.out.printf("=== Branches ===\n");
         List<String> branches = getAllBranchName();
         for (String br : branches) {
-            if (!br.equals(curBranch)) {
-                System.out.println(br);
+            if (br.equals(curBranch)) {
+                System.out.print("*");
             }
+            System.out.println(br);
         }
-
         System.out.println();
         // Staged Files
         System.out.printf("=== Staged Files ===\n");
@@ -90,6 +89,16 @@ public class Repository {
         System.out.println();
         // Removed Files
         System.out.printf("=== Removed Files ===\n");
+        // TODO
+        System.out.println();
+
+        // Modifications Not Staged For Commit
+        System.out.printf("=== Modifications Not Staged For Commit ===\n");
+        // TODO
+        System.out.println();
+
+        // Untracked Files
+        System.out.printf("=== Untracked Files ===\n");
         // TODO
         System.out.println();
 
