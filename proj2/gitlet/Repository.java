@@ -33,7 +33,7 @@ public class Repository {
 
     public static void handleInit() {
         if (GITLET_DIR.exists()) {
-            exitWithError("A Gitlet version-control system already exists in the current directory.");
+            exitWithSuccess("A Gitlet version-control system already exists in the current directory.");
         } else {
             GITLET_DIR.mkdir();
             STAGINGAREA_DIR.mkdir();
@@ -97,7 +97,7 @@ public class Repository {
     public static void handleAdd(String fileName) {
         validateGitletDirectory();
         if (!join(CWD, fileName).exists()) {
-            exitWithError("File does not exist.");
+            exitWithSuccess("File does not exist.");
         }
 
         Commit cm = Commit.fromFile(getBranchFile());
@@ -151,7 +151,7 @@ public class Repository {
         validateGitletDirectory();
         String branchName = args[1];
         if (join(BRANCH_DIR, branchName).exists()) {
-            exitWithError("A branch with that name already exists.");
+            exitWithSuccess("A branch with that name already exists.");
         }
         File newBranchFile = join(BRANCH_DIR, branchName);
         try {
@@ -166,10 +166,10 @@ public class Repository {
         validateGitletDirectory();
         String branchName = args[1];
         if (!join(BRANCH_DIR, branchName).exists()) {
-            exitWithError("A branch with that name does not exist.");
+            exitWithSuccess("A branch with that name does not exist.");
         }
         if (getCurrentBranchName().equals(branchName)) {
-            exitWithError("Cannot remove the current branch.");
+            exitWithSuccess("Cannot remove the current branch.");
         }
 
         File branchFile = join(BRANCH_DIR, branchName);
@@ -188,20 +188,17 @@ public class Repository {
             case 2:
                 String branchName = args[1];
                 if (!join(BRANCH_DIR, branchName).exists()) {
-                    exitWithError("No such branch exists.");
+                    exitWithSuccess("No such branch exists.");
                 }
                 if (getCurrentBranchName().equals(branchName)) {
-                    exitWithError("No need to checkout the current branch.");
+                    exitWithSuccess("No need to checkout the current branch.");
                 }
                 // TODO:  If a working file is untracked in the current branch
                 //  and would be overwritten by the checkout,
                 if (1 != 1) {
-                    exitWithError("There is an untracked file in the way; delete it, or add and commit it first.");
+                    exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
                 }
-                if (readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
-                    // update HEAD
-                    updateHEAD(branchName);
-                } else {
+                if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
                     Commit curCm = Commit.fromFile(getBranchFile());
                     Commit targetCm = Commit.fromFile(getBranchFile(branchName));
                     for (String fileName : curCm.getFileMap().keySet()) {
@@ -222,10 +219,9 @@ public class Repository {
                             }
                         }
                     }
-
-                    // update HEAD
-                    updateHEAD(branchName);
                 }
+                // update HEAD
+                updateHEAD(branchName);
                 break;
             default:
                 break;
@@ -233,18 +229,23 @@ public class Repository {
 
     }
 
+    public static void handleReset(String[] args) {
+        validateGitletDirectory();
+        String cmID = getFullID(args[1]);
+        checkCommitID(cmID);
+        // TODO:
+
+
+    }
     public static void fileCheckout(String fileName, String cmID) {
-        // abbreviate commit ID
-        if (cmID.length() < 40) {
-            cmID = getFullID(cmID);
-        }
+        cmID = getFullID(cmID);
         Commit cm = Commit.fromID(cmID);
         if (cm == null) {
-            exitWithError("No commit with that id exists.");
+            exitWithSuccess("No commit with that id exists.");
         }
         String blid = cm.getFileBlobID(fileName);
         if (blid == null) {
-            exitWithError("File does not exist in that commit.");
+            exitWithSuccess("File does not exist in that commit.");
         }
         Blob bl = Blob.fromID(blid);
         File targetFile = join(CWD, fileName);
@@ -275,7 +276,7 @@ public class Repository {
             cm = Commit.fromID(cm.getParentID());
         }
         if (!findFlag) {
-            exitWithError("Found no commit with that message.");
+            exitWithSuccess("Found no commit with that message.");
         }
     }
     public static void handleLog() {
@@ -290,7 +291,7 @@ public class Repository {
 
     public static void validateGitletDirectory() {
         if (!GITLET_DIR.exists()) {
-            exitWithError("Not in an initialized Gitlet directory.");
+            exitWithSuccess("Not in an initialized Gitlet directory.");
         }
     }
 

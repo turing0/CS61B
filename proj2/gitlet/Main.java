@@ -13,7 +13,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length == 0) {
-            exitWithError("Please enter a command.");
+            exitWithSuccess("Please enter a command.");
         }
         String firstArg = args[0];
         switch(firstArg) {
@@ -42,6 +42,9 @@ public class Main {
             case "checkout":
                 Repository.handleCheckout(args);
                 break;
+            case "reset":
+                Repository.handleReset(args);
+                break;
             case "find":
                 Repository.handleFind(args);
                 break;
@@ -50,7 +53,7 @@ public class Main {
                 break;
             default:
 //                exitWithError(String.format("Unknown command: %s", args[0]));
-                exitWithError("No command with that name exists.");
+                exitWithSuccess("No command with that name exists.");
         }
     }
 

@@ -252,16 +252,16 @@ class Utils {
 
     public static void validateCmMessage(String[] args) {
         if (args.length < 2 || args[1].equals("")) {
-            exitWithError("Please enter a commit message.");
+            exitWithSuccess("Please enter a commit message.");
         }
     }
 
-    public static void exitWithError(String message) {
-        if (message != null && !message.equals("")) {
-            System.out.println(message);
-        }
-        System.exit(-1);
-    }
+//    public static void exitWithError(String message) {
+//        if (message != null && !message.equals("")) {
+//            System.out.println(message);
+//        }
+//        System.exit(-1);
+//    }
     public static void exitWithSuccess(String message) {
         if (message != null && !message.equals("")) {
             System.out.println(message);
@@ -271,7 +271,8 @@ class Utils {
 
     public static void updateHEAD(String branchName) {
         File branchFile = join(Repository.BRANCH_DIR, branchName);
-        writeContents(Repository.HEAD_FILE, Repository.GITLET_DIR.toURI().relativize(branchFile.toURI()).getPath());
+        writeContents(Repository.HEAD_FILE,
+                Repository.GITLET_DIR.toURI().relativize(branchFile.toURI()).getPath());
     }
 
 //    public static File getBranchFile(String branchName) {
@@ -307,6 +308,13 @@ class Utils {
         return ft.format(date);
     }
 
+    public static void checkCommitID(String cmID) {
+        Commit cm = Commit.fromID(cmID);
+        if (cm == null) {
+            exitWithSuccess("No commit with that id exists.");
+        }
+    }
+
     public static File getObjectFile(String id) {
         if (id == null) {
             return null;
@@ -335,10 +343,13 @@ class Utils {
     }
 
     public static String getFullID(String id) {
+        if (id.length() == 40) {
+            return id;
+        }
         File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
         if (filePath.exists()) {
             for (File f : filePath.listFiles()) {
-                if (f.getName().substring(0, id.length()-2).equals(id.substring(2))) {
+                if (f.getName().substring(0, id.length() - 2).equals(id.substring(2))) {
                     return id.substring(0, 2) + f.getName();
                 }
             }
