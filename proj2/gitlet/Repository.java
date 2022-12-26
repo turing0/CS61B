@@ -90,9 +90,6 @@ public class Repository {
 
         if (cm.getFileMap() != null && cm.getFileMap().get(fileName) != null) {
             String targetBlobID = cm.getFileMap().get(fileName);
-//            System.out.println("-----------");
-//            System.out.println(targetBlobID);
-//            System.out.println(getFileSha1(fileName));
             if (getFileSha1(fileName).equals(targetBlobID)) {
                 exitWithSuccess("");
             } else {

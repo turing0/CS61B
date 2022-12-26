@@ -37,7 +37,7 @@ public class Commit implements Serializable {
     public Commit(String msg) {
 //        id = sha1();
         message = msg;
-        SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+        SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
         if (msg.equals("initial commit")) {
             Date dstart = new Date(0);
 //            System.out.println(ft.format(dstart));
@@ -61,7 +61,7 @@ public class Commit implements Serializable {
         id = cm.getID();
         message = msg;
         Date dNow = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+        SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
         timestamp = ft.format(dNow);
         parent = cm.getID();
         if (cm.getFileMap() == null) {
