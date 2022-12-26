@@ -29,7 +29,7 @@ public class Main {
                 Repository.handleAdd(fileName);
                 break;
             case "commit":
-                validateMessage(args);
+                validateCmMessage(args);
                 String msg = args[1];
                 Repository.handleCommit(msg);
                 break;

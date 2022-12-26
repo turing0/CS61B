@@ -250,7 +250,7 @@ class Utils {
         }
     }
 
-    public static void validateMessage(String[] args) {
+    public static void validateCmMessage(String[] args) {
         if (args.length < 2 || args[1].equals("")) {
             exitWithError("Please enter a commit message.");
         }
@@ -306,4 +306,32 @@ class Utils {
         SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
         return ft.format(date);
     }
+
+    public static File getObjectFile(String id) {
+        if (id == null) {
+            return null;
+        }
+        File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
+        if (filePath.exists()) {
+            File file = join(filePath, id.substring(2));
+            if (file.exists()) {
+                return file;
+            }
+        }
+        return null;
+    }
+    public static void createObjectFile(String id, Serializable obj) {
+        File filePath = join(Repository.BLOB_DIR, id.substring(0, 2));
+        if (!filePath.exists()) {
+            filePath.mkdir();
+        }
+        File file = join(filePath, id.substring(2));
+        try {
+            file.createNewFile();
+            writeObject(file, obj);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

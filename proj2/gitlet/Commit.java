@@ -59,11 +59,12 @@ public class Commit implements Serializable {
         if (id == null) {
             return null;
         }
-        File cmFile = join(Repository.COMMIT_DIR, id);
-        if (cmFile.exists()) {
-            return readObject(cmFile, Commit.class);
-        }
-        return null;
+        return readObject(getObjectFile(id), Commit.class);
+//        File cmFile = join(Repository.COMMIT_DIR, id);
+//        if (cmFile.exists()) {
+//            return readObject(cmFile, Commit.class);
+//        }
+//        return null;
     }
     public static Commit fromFile(File f) {
         String id = readContentsAsString(f);
@@ -103,13 +104,14 @@ public class Commit implements Serializable {
     }
 
     public void saveCommit() {
-        File cmFile = new File(Repository.COMMIT_DIR, id);
-        try {
-            cmFile.createNewFile();
-            writeObject(cmFile, this);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        createObjectFile(id, this);
+//        File cmFile = new File(Repository.COMMIT_DIR, id);
+//        try {
+//            cmFile.createNewFile();
+//            writeObject(cmFile, this);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override

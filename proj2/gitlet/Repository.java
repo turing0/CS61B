@@ -238,6 +238,10 @@ public class Repository {
     }
 
     public static void fileCheckout(String fileName, String cmID) {
+        // abbreviate commit ID
+        if (cmID.length() < 40) {
+
+        }
         Commit cm = Commit.fromID(cmID);
         if (cm == null) {
             exitWithError("No commit with that id exists.");
