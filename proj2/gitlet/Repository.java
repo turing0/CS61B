@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -26,10 +28,12 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     public static final File STAGINGAREA_DIR = join(GITLET_DIR, "staging");
+    public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
     public static final File ADDITION_FILE = join(STAGINGAREA_DIR, "ADDITION");
     public static final File REMOVAL_FILE = join(STAGINGAREA_DIR, "REMOVAL");
     public static final File COMMIT_DIR = join(GITLET_DIR, "commit");
     public static final File BLOB_DIR = join(GITLET_DIR, "blob");
+    public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
     /* TODO: fill in the rest of this class. */
@@ -40,11 +44,13 @@ public class Repository {
         } else {
             GITLET_DIR.mkdir();
             STAGINGAREA_DIR.mkdir();
+            BRANCH_DIR.mkdirs();
             COMMIT_DIR.mkdir();
             BLOB_DIR.mkdir();
             Addition ad = new Addition();
             ad.saveAddition();
             try {
+                MASTER_FILE.createNewFile();
                 HEAD_FILE.createNewFile();
 //                ADDITION_FILE.createNewFile();
 //                REMOVAL_FILE.createNewFile();
@@ -54,17 +60,26 @@ public class Repository {
 
             // initial commit
             String id = makeCommit("initial commit");
+            // update branch master
+            writeContents(MASTER_FILE, id);
             // update HEAD
-            writeContents(HEAD_FILE, id);
-
+            updateHEAD("master");
         }
     }
 
     public static void handleStatus() {
         validateGitletDirectory();
         // Branches
-        System.out.printf("=== Branches ===\n*master\n");
-        // TODO
+        String curBranch = getCurrentBranchName();
+        System.out.printf("=== Branches ===\n*%s\n", curBranch);
+        // TODO: output remain branches
+        List<String> branches = getAllBranchName();
+        for (String br : branches) {
+            if (!br.equals(curBranch)) {
+                System.out.println(br);
+            }
+        }
+
         System.out.println();
         // Staged Files
         System.out.printf("=== Staged Files ===\n");
@@ -78,7 +93,6 @@ public class Repository {
         // TODO
         System.out.println();
 
-
     }
     public static void handleAdd(String fileName) {
         validateGitletDirectory();
@@ -86,7 +100,7 @@ public class Repository {
             exitWithError("File does not exist.");
         }
 
-        Commit cm = Commit.fromFile(Repository.HEAD_FILE);
+        Commit cm = Commit.fromFile(getBranchFile());
 
         if (cm.getFileMap() != null && cm.getFileMap().get(fileName) != null) {
             String targetBlobID = cm.getFileMap().get(fileName);
@@ -113,47 +127,109 @@ public class Repository {
 
     public static void handleCommit(String msg) {
         validateGitletDirectory();
+
         Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
         if (ad.size() == 0) {
             exitWithSuccess("No changes added to the commit.");
         }
-        Commit cm = Commit.fromFile(Repository.HEAD_FILE);
+        Commit cm = Commit.fromFile(getBranchFile());
         Commit newCm = new Commit(cm, msg);
 
         for (String key : ad.getKeySet()) {
             // TODO: if has the same
-//            newCm.addfileId(ad.get(key));
             newCm.addFile(key, ad.get(key));
         }
         ad.clearAndSave();
 
         newCm.updateIDAndSave();
-        // update HEAD
-        writeContents(HEAD_FILE, newCm.getID());
+        // update branch
+        writeContents(getBranchFile(), newCm.getID());
 
+    }
+
+    public static void handleBranch(String[] args) {
+        validateGitletDirectory();
+        String branchName = args[1];
+        if (join(BRANCH_DIR, branchName).exists()) {
+            exitWithError("A branch with that name already exists.");
+        }
+        File newBranchFile = join(BRANCH_DIR, branchName);
+        try {
+            newBranchFile.createNewFile();
+            writeContents(newBranchFile, readContentsAsString(getBranchFile()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void handleRmBranch(String[] args) {
+        validateGitletDirectory();
+        String branchName = args[1];
+        if (!join(BRANCH_DIR, branchName).exists()) {
+            exitWithError("A branch with that name does not exist.");
+        }if (getCurrentBranchName().equals(branchName)) {
+            exitWithError("Cannot remove the current branch.");
+        }
+
+        File branchFile = join(BRANCH_DIR, branchName);
+        branchFile.delete();
     }
 
     public static void handleCheckout(String[] args) {
         validateGitletDirectory();
         switch(args.length) {
             case 3:
-                fileCheckout(args[2], readContentsAsString(HEAD_FILE));
+                fileCheckout(args[2], readContentsAsString(getBranchFile()));
                 break;
             case 4:
-                String targetID = args[1];
-                String fileName = args[3];
-                fileCheckout(fileName, targetID);
+                fileCheckout(args[3], args[1]);
                 break;
             case 2:
-                // TODO
+                String branchName = args[1];
+                if (!join(BRANCH_DIR, branchName).exists()) {
+                    exitWithError("No such branch exists.");
+                }
+                if (getCurrentBranchName().equals(branchName)) {
+                    exitWithError("No need to checkout the current branch.");
+                }
+                // TODO:  If a working file is untracked in the current branch
+                //  and would be overwritten by the checkout,
+                if (1!=1) {
+                    exitWithError("There is an untracked file in the way; delete it, or add and commit it first.");
+                }
+                if (readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
+                    // update HEAD
+                    updateHEAD(branchName);
+                } else {
+                    Commit curCm = Commit.fromFile(getBranchFile());
+                    Commit targetCm = Commit.fromFile(getBranchFile(branchName));
+                    for (String fileName : curCm.getFileMap().keySet()) {
+                        if (targetCm.getFileBlobID(fileName) == null) {
+                            File f = join(CWD, fileName);
+                            f.delete();
+                        } else {
+                            if (!targetCm.getFileBlobID(fileName).equals(curCm.getFileBlobID(fileName))) {
+                                fileCheckout(fileName, targetCm.getID());
+                            }
+                        }
+                    }
+                    // case: new file -> create
+                    for (String fileName : targetCm.getFileMap().keySet()) {
+                        if (curCm.getFileBlobID(fileName) == null) {
+                            fileCheckout(fileName, targetCm.getID());
+                        }
+                    }
+                    // update HEAD
+                    updateHEAD(branchName);
+                }
 
                 break;
         }
 
     }
 
-    public static void fileCheckout(String fileName, String id) {
-        Commit cm = Commit.fromID(id);
+    public static void fileCheckout(String fileName, String cmID) {
+        Commit cm = Commit.fromID(cmID);
         if (cm == null) {
             exitWithError("No commit with that id exists.");
         }
@@ -165,8 +241,8 @@ public class Repository {
         File targetFile = join(CWD, fileName);
         writeContents(targetFile, bl.getContents());
     }
-    public static String makeCommit(String msg) {
-        Commit cm = new Commit(msg);
+    public static String makeCommit(String message) {
+        Commit cm = new Commit(null, message);
         cm.saveCommit();
         return cm.getID();
     }
@@ -180,12 +256,11 @@ public class Repository {
     public static void handleLog() {
         validateGitletDirectory();
 
-        Commit cm = Commit.fromFile(HEAD_FILE);
+        Commit cm = Commit.fromFile(getBranchFile());
         while (cm != null) {
             System.out.println(cm);
             cm = Commit.fromID(cm.getParentID());
         }
-
     }
 
     public static void validateGitletDirectory() {

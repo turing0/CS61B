@@ -7,7 +7,6 @@ import java.util.*;
 import static gitlet.Utils.*;
 
 public class Addition implements Serializable {
-//    private List<Map<String, String >> recordList;
     private Map<String, String> mp;
 
     public Addition() {

@@ -18,11 +18,9 @@ public class Main {
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
                 Repository.handleInit();
                 break;
             case "status":
-                // TODO: handle the `status` command
                 Repository.handleStatus();
                 break;
             case "add":
@@ -31,10 +29,15 @@ public class Main {
                 Repository.handleAdd(fileName);
                 break;
             case "commit":
-                // TODO: handle the `commit [filename]` command
                 validateMessage(args);
                 String msg = args[1];
                 Repository.handleCommit(msg);
+                break;
+            case "branch":
+                Repository.handleBranch(args);
+                break;
+            case "rm-branch":
+                Repository.handleRmBranch(args);
                 break;
             case "checkout":
                 Repository.handleCheckout(args);

@@ -10,13 +10,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /** Assorted utilities.
@@ -268,5 +268,43 @@ class Utils {
             System.out.println(message);
         }
         System.exit(0);
+    }
+
+    public static void updateHEAD(String branchName) {
+        File branchFile = join(Repository.BRANCH_DIR, branchName);
+        writeContents(Repository.HEAD_FILE, Repository.GITLET_DIR.toURI().relativize(branchFile.toURI()).getPath());
+    }
+
+//    public static File getBranchFile(String branchName) {
+    public static File getBranchFile(String... args) {
+        // current branch
+        if (args.length == 0) {
+            return join(Repository.GITLET_DIR, readContentsAsString(Repository.HEAD_FILE));
+        }
+        return join(Repository.BRANCH_DIR, args[0]);
+    }
+
+    public static String getCurrentBranchName() {
+        String[] directories = readContentsAsString(Repository.HEAD_FILE).split("/");
+        return directories[directories.length-1];
+    }
+
+    public static List<String> getAllBranchName() {
+        List<String> ls = new ArrayList<>();
+        for (File f : Repository.BRANCH_DIR.listFiles()) {
+            ls.add(f.getName());
+        }
+        return ls;
+    }
+
+    public static String getDate(long... args) {
+        Date date;
+        if (args.length == 0) {
+            date = new Date();
+        } else {
+            date = new Date(args[0]);
+        }
+        SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
+        return ft.format(date);
     }
 }

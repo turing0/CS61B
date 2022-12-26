@@ -26,50 +26,35 @@ public class Commit implements Serializable {
      */
 
     /** The message of this Commit. */
-    public static final File COMMIT_DIR = join(".gitlet", "commit");
     private String id;
     private String message;
     private String timestamp;
     private String parent;
-//    private List<String> fileIdList;
     private Map<String, String> fileMap;
 
-    public Commit(String msg) {
-//        id = sha1();
-        message = msg;
-        SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
-        if (msg.equals("initial commit")) {
-            Date dstart = new Date(0);
-//            System.out.println(ft.format(dstart));
-//            timestamp = "Thu 1970.01.01 at 00:00:00 AM UTC";
-            timestamp = ft.format(dstart);
-        } else {
-            Date dNow = new Date();
-            timestamp = ft.format(dNow);
-        }
-        parent = null;
-        fileMap = null;
-
-        List<String> ls = new ArrayList<>();
-        ls.add(message);
-        ls.add(timestamp);
-//        System.out.println("ls: " + ls);
-        id = sha1(ls);
-    }
-
     public Commit(Commit cm, String msg) {
-        id = cm.getID();
         message = msg;
-        Date dNow = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd hh:mm:ss yyyy Z");
-        timestamp = ft.format(dNow);
-        parent = cm.getID();
-        if (cm.getFileMap() == null) {
-            fileMap = new HashMap<>();
+        if (cm == null) {
+            timestamp = getDate(0);
+            parent = null;
+            fileMap = null;
+            List<String> ls = new ArrayList<>();
+            ls.add(message);
+            ls.add(timestamp);
+            id = sha1(ls);
         } else {
-            fileMap = new HashMap<>(cm.getFileMap());
+            timestamp = getDate();
+            parent = cm.getID();
+            if (cm.getFileMap() == null) {
+                fileMap = new HashMap<>();
+            } else {
+                fileMap = new HashMap<>(cm.getFileMap());
+            }
+            id = cm.getID();
         }
+
     }
+
 
     public void addFile(String fileName, String id) {
         fileMap.put(fileName, id);
@@ -79,7 +64,7 @@ public class Commit implements Serializable {
         if (id == null) {
             return null;
         }
-        File cmFile = join(COMMIT_DIR, id);
+        File cmFile = join(Repository.COMMIT_DIR, id);
         if (cmFile.exists()) {
             return readObject(cmFile, Commit.class);
         }
@@ -111,9 +96,6 @@ public class Commit implements Serializable {
         return message;
     }
 
-//    public List<String> getfileIdList() {
-//        return fileIdList;
-//    }
     public Map<String, String> getFileMap() {
         return fileMap;
     }
@@ -126,7 +108,7 @@ public class Commit implements Serializable {
     }
 
     public void saveCommit() {
-        File cmFile = new File(COMMIT_DIR, id);
+        File cmFile = new File(Repository.COMMIT_DIR, id);
         try {
             cmFile.createNewFile();
             writeObject(cmFile, this);
