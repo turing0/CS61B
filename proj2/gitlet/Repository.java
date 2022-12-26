@@ -116,10 +116,7 @@ public class Repository {
                 String blid = makeBlob(fileName);
 //                Addition ad = Addition.fromFile(ADDITION_FILE);
                 ad.addAndSave(fileName, blid);
-                // TODO: remove it from the staging area if it is already there
-                //  (as can happen when a file is changed, added, and then changed back to it’s original version).
-                //  The file will no longer be staged for removal (see gitlet rm),
-                //  if it was at the time of the command.
+
             }
         } else {
             // make blob
@@ -204,6 +201,9 @@ public class Repository {
 
     public static void handleCheckout(String[] args) {
         validateGitletDirectory();
+        if (args.length > 2 && !args[args.length - 2].equals("--")) {
+            exitWithSuccess("Incorrect operands.");
+        }
         switch(args.length) {
             case 3:
                 fileCheckout(args[2], readContentsAsString(getBranchFile()));
