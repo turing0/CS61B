@@ -215,10 +215,9 @@ public class Repository {
     public static void handleBranch(String[] args) {
         validateGitletDirectory();
         String branchName = args[1];
-        checkBranchExist(branchName);
-//        if (join(BRANCH_DIR, branchName).exists()) {
-//            exitWithSuccess("A branch with that name already exists.");
-//        }
+        if (join(BRANCH_DIR, branchName).exists()) {
+            exitWithSuccess("A branch with that name already exists.");
+        }
         File newBranchFile = join(BRANCH_DIR, branchName);
         try {
             newBranchFile.createNewFile();
@@ -303,7 +302,7 @@ public class Repository {
         Commit cm = Commit.fromFile(getBranchFile());
         Commit targetCm = Commit.fromFile(getBranchFile(branchName));
         checkUntrackedOverwritten(cm, targetCm);
-        
+
         Set<String> s = new HashSet<>();
         while (cm != null) {
             s.add(cm.getID());
