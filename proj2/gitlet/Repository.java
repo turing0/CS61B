@@ -132,18 +132,26 @@ public class Repository {
         validateGitletDirectory();
 
         Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-        if (ad.size() == 0) {
+        if (ad.additionSize() == 0 && ad.removalSize() == 0) {
             exitWithSuccess("No changes added to the commit.");
         }
         Commit cm = Commit.fromFile(getBranchFile());
         Commit newCm = new Commit(cm, msg);
-
-        for (String key : ad.getKeySet()) {
-            // TODO: if has the same
-            newCm.addFile(key, ad.get(key));
+        // addition
+        if (ad.additionSize() != 0) {
+            for (String key : ad.getKeySet()) {
+                // TODO: if has the same
+                newCm.addFile(key, ad.get(key));
+            }
         }
-        ad.clearAndSave();
+        // removal
+        if (ad.removalSize() != 0) {
+            for (String fileName : ad.getRemovalList()) {
+                newCm.removeFile(fileName);
+            }
+        }
 
+        ad.clearAndSave();
         newCm.updateIDAndSave();
         // update branch
         writeContents(getBranchFile(), newCm.getID());
@@ -222,7 +230,7 @@ public class Repository {
                 // TODO:  If a working file is untracked in the current branch
                 //  and would be overwritten by the checkout,
                 Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-                if (ad.size() != 0) {
+                if (ad.additionSize() != 0) {
                     exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
                 }
                 if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {

@@ -42,8 +42,12 @@ public class Addition implements Serializable {
         additionMap.remove(key);
         saveAddition();
     }
-    public int size() {
+    public int additionSize() {
         return additionMap.size();
+    }
+
+    public int removalSize() {
+        return removalList.size();
     }
 
     public void saveAddition() {

@@ -54,6 +54,10 @@ public class Commit implements Serializable {
         fileMap.put(fileName, id);
     }
 
+    public void removeFile(String fileName) {
+        fileMap.remove(fileName);
+    }
+
     public static Commit fromID(String id) {
         if (id == null) {
             return null;
