@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import static gitlet.Utils.*;
 
@@ -237,9 +238,6 @@ public class Repository {
         validateGitletDirectory();
         String branchName = args[1];
         checkBranchExist(branchName);
-//        if (!join(BRANCH_DIR, branchName).exists()) {
-//            exitWithSuccess("A branch with that name does not exist.");
-//        }
         if (getCurrentBranchName().equals(branchName)) {
             exitWithSuccess("Cannot remove the current branch.");
         }
@@ -311,12 +309,6 @@ public class Repository {
         if (s.contains(targetCm.getID())) {
             exitWithSuccess("Given branch is an ancestor of the current branch.");
         }
-//        while (cm != null) {
-//            if (cm.getID().equals(targetCm.getID())) {
-//                exitWithSuccess("Given branch is an ancestor of the current branch.");
-//            }
-//            cm = Commit.fromID(cm.getParentID());
-//        }
         Commit curCm = Commit.fromFile(getBranchFile());
         // find split point
         Commit splitCm = null;
@@ -334,6 +326,56 @@ public class Repository {
             exitWithSuccess("Current branch fast-forwarded.");
         }
 
+        Map<String, String> curFileMap = curCm.getFileMap();
+        Map<String, String> splitFileMap = splitCm.getFileMap();
+        Map<String, String> targetFileMap = targetCm.getFileMap();
+        Set<String> allFiles = new HashSet<>();
+        Stage stage = Stage.fromFile(STAGE_FILE);
+        for (String file : curFileMap.keySet()) {
+            allFiles.add(file);
+        }
+        for (String file : targetFileMap.keySet()) {
+            allFiles.add(file);
+        }
+        // 7 rules
+        for (String fileName : allFiles) {
+            if (splitFileMap.containsKey(fileName)) {
+                if (curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
+                    if (!splitFileMap.get(fileName).equals(targetFileMap.get(fileName)) && splitFileMap.get(fileName).equals(curFileMap.get(fileName))) {
+                        stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 1
+                        continue;
+                    }
+                    if (!splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && splitFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
+                        continue; // rule 2
+                    }
+                    if (!splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && !splitFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
+                        if (!curFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
+                            // TODO: rule 3b - conflict
+
+                        }
+                    }
+                }
+                if (curFileMap.containsKey(fileName)) { // this file in head and split, not in target
+                    if (splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && !targetFileMap.containsKey(fileName)) {
+                        stage.stageForRemoval(fileName); // rule 6
+                        continue;
+                    }
+                } else { // this file in head and target, not in split
+                    if (splitFileMap.get(fileName).equals(targetFileMap.get(fileName)) && !curFileMap.containsKey(fileName)) {
+                        continue; // rule 7
+                    }
+                }
+
+            } else {
+                if (!splitFileMap.containsKey(fileName) && !targetFileMap.containsKey(fileName) && curFileMap.containsKey(fileName)) {
+                    continue; // rule 4
+                }
+                if (!splitFileMap.containsKey(fileName) && !curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
+                    stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 5
+                    continue;
+                }
+            }
+        }
 
 
     }
@@ -354,7 +396,8 @@ public class Repository {
     public static void checkUntrackedOverwritten(Commit curCm, Commit targetCm) {
         for (String fileName : targetCm.getFileMap().keySet()) {
             if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
-                exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
+                exitWithSuccess(
+                        "There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
     }
