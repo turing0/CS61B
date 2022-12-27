@@ -7,17 +7,17 @@ import java.util.*;
 import static gitlet.Utils.*;
 
 public class Addition implements Serializable {
-    private Map<String, String> mp;
+    private Map<String, String> additionMap;
 //    private Map<String, String> removalMap;
     private List<String> removalList;
 
     public Addition() {
-        mp = new HashMap<>();
+        additionMap = new HashMap<>();
         removalList = new ArrayList<>();
     }
 
     public Set<String> getKeySet() {
-        return mp.keySet();
+        return additionMap.keySet();
     }
 
     public List<String> getRemovalList() {
@@ -30,20 +30,20 @@ public class Addition implements Serializable {
     }
 
     public void addAndSave(String fileName, String blobid) {
-        mp.put(fileName, blobid);
+        additionMap.put(fileName, blobid);
         saveAddition();
     }
 
     public String get(String key) {
-        return mp.get(key);
+        return additionMap.get(key);
     }
 
     public void remove(String key) {
-        mp.remove(key);
+        additionMap.remove(key);
         saveAddition();
     }
     public int size() {
-        return mp.size();
+        return additionMap.size();
     }
 
     public void saveAddition() {
@@ -57,7 +57,7 @@ public class Addition implements Serializable {
     }
 
     public void clearAndSave() {
-        mp = new HashMap<>();
+        additionMap = new HashMap<>();
         removalList = new ArrayList<>();
         saveAddition();
     }

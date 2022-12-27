@@ -221,7 +221,8 @@ public class Repository {
                 }
                 // TODO:  If a working file is untracked in the current branch
                 //  and would be overwritten by the checkout,
-                if (1 != 1) {
+                Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
+                if (ad.size() != 0) {
                     exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
                 }
                 if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
