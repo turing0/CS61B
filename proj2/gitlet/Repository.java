@@ -357,7 +357,9 @@ public class Repository {
                 }
                 if (curFileMap.containsKey(fileName)) { // this file in head and split, not in target
                     if (splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && !targetFileMap.containsKey(fileName)) {
+//                        System.out.printf("match rule 6: %s\n", fileName);
                         stage.stageForRemoval(fileName); // rule 6
+                        join(CWD, fileName).delete();
                         continue;
                     }
                 } else { // this file in head and target, not in split
@@ -371,11 +373,14 @@ public class Repository {
                     continue; // rule 4
                 }
                 if (!splitFileMap.containsKey(fileName) && !curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
+//                    System.out.printf("match rule 5, file: %s %s\n", fileName, targetFileMap.get(fileName));
                     stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 5
+                    fileCheckout(fileName, targetCm.getID());
                     continue;
                 }
             }
         }
+//        stage.saveStage();
         // automatically commit
         mergeCommit(branchName);
 
@@ -393,13 +398,16 @@ public class Repository {
         // addition
         if (stage.additionSize() != 0) {
             for (String key : stage.getAdditionKeySet()) {
+//                System.out.printf("To addition: %s %s\n", key, stage.get(key));
                 // TODO: if has the same
                 newMgCm.addFile(key, stage.get(key));
+//                fileCheckout(key, stage.get(key));
             }
         }
         // removal
         if (stage.removalSize() != 0) {
             for (String fileName : stage.getRemovalList()) {
+//                System.out.printf("To removal: %s\n", fileName);
                 newMgCm.removeFile(fileName);
             }
         }
