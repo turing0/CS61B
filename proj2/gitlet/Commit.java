@@ -31,7 +31,6 @@ public class Commit implements Serializable {
         if (cm == null) {
             timestamp = getDate(0);
             parent = null;
-//            fileMap = null;
             fileMap = new HashMap<>();
             List<String> ls = new ArrayList<>(fileMap.values());
             ls.add(message);
@@ -41,11 +40,6 @@ public class Commit implements Serializable {
             timestamp = getDate();
             parent = cm.getID();
             fileMap = new HashMap<>(cm.getFileMap());
-//            if (cm.getFileMap() == null) {
-//                fileMap = new HashMap<>();
-//            } else {
-//                fileMap = new HashMap<>(cm.getFileMap());
-//            }
             id = cm.getID();
         }
     }

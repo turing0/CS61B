@@ -33,7 +33,8 @@ public class Repository {
 
     public static void handleInit() {
         if (GITLET_DIR.exists()) {
-            exitWithSuccess("A Gitlet version-control system already exists in the current directory.");
+            exitWithSuccess(
+                    "A Gitlet version-control system already exists in the current directory.");
         } else {
             GITLET_DIR.mkdir();
             STAGINGAREA_DIR.mkdir();
@@ -230,12 +231,20 @@ public class Repository {
                 // TODO:  If a working file is untracked in the current branch
                 //  and would be overwritten by the checkout,
                 Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-                if (ad.additionSize() != 0) {
-                    exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
-                }
+//                if (ad.removalSize() != 0) {
+//                    exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
+//                }
                 if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
                     Commit curCm = Commit.fromFile(getBranchFile());
                     Commit targetCm = Commit.fromFile(getBranchFile(branchName));
+                    // check  if a working file is untracked in the current branch
+                    // and would be overwritten by the checkout
+                    for (String fileName : targetCm.getFileMap().keySet()) {
+                        if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
+                            exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
+                        }
+                    }
+
                     for (String fileName : curCm.getFileMap().keySet()) {
                         if (targetCm.getFileBlobID(fileName) == null) {
                             File f = join(CWD, fileName);
