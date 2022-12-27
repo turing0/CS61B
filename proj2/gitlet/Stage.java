@@ -51,10 +51,10 @@ public class Stage implements Serializable {
     }
 
     public void saveStage() {
-        File adFile = Repository.STAGE_FILE;
+        File stageFile = Repository.STAGE_FILE;
         try {
-            adFile.createNewFile();
-            writeObject(adFile, this);
+            stageFile.createNewFile();
+            writeObject(stageFile, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -328,6 +328,8 @@ public class Repository {
         }
         // update branch's head
         writeContents(getBranchFile(), cmID);
+        Stage st = Stage.fromFile(STAGE_FILE);
+        st.clearAndSave();
 
     }
     public static void fileCheckout(String fileName, String cmID) {
