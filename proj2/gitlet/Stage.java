@@ -6,17 +6,17 @@ import java.io.Serializable;
 import java.util.*;
 import static gitlet.Utils.*;
 
-public class Addition implements Serializable {
+public class Stage implements Serializable {
     private Map<String, String> additionMap;
-//    private Map<String, String> removalMap;
+    //    private Map<String, String> removalMap;
     private List<String> removalList;
 
-    public Addition() {
+    public Stage() {
         additionMap = new HashMap<>();
         removalList = new ArrayList<>();
     }
 
-    public Set<String> getKeySet() {
+    public Set<String> getAdditionKeySet() {
         return additionMap.keySet();
     }
 
@@ -26,12 +26,12 @@ public class Addition implements Serializable {
 
     public void stageToRemoval(String fileName) {
         removalList.add(fileName);
-        saveAddition();
+        saveStage();
     }
 
-    public void addAndSave(String fileName, String blobid) {
+    public void stageToAddition(String fileName, String blobid) {
         additionMap.put(fileName, blobid);
-        saveAddition();
+        saveStage();
     }
 
     public String get(String key) {
@@ -40,7 +40,7 @@ public class Addition implements Serializable {
 
     public void remove(String key) {
         additionMap.remove(key);
-        saveAddition();
+        saveStage();
     }
     public int additionSize() {
         return additionMap.size();
@@ -50,8 +50,8 @@ public class Addition implements Serializable {
         return removalList.size();
     }
 
-    public void saveAddition() {
-        File adFile = Repository.ADDITION_FILE;
+    public void saveStage() {
+        File adFile = Repository.STAGE_FILE;
         try {
             adFile.createNewFile();
             writeObject(adFile, this);
@@ -63,12 +63,10 @@ public class Addition implements Serializable {
     public void clearAndSave() {
         additionMap = new HashMap<>();
         removalList = new ArrayList<>();
-        saveAddition();
+        saveStage();
     }
 
-    public static Addition fromFile(File f) {
-        return readObject(f, Addition.class);
+    public static Stage fromFile(File f) {
+        return readObject(f, Stage.class);
     }
-
 }
-

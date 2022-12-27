@@ -23,10 +23,8 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    public static final File STAGINGAREA_DIR = join(GITLET_DIR, "staging");
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
-    public static final File ADDITION_FILE = join(STAGINGAREA_DIR, "ADDITION");
-    public static final File REMOVAL_FILE = join(STAGINGAREA_DIR, "REMOVAL");
+    public static final File STAGE_FILE = join(GITLET_DIR, "INDEX");
     public static final File OBJECT_DIR = join(GITLET_DIR, "objects");
     public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
@@ -37,15 +35,13 @@ public class Repository {
                     "A Gitlet version-control system already exists in the current directory.");
         } else {
             GITLET_DIR.mkdir();
-            STAGINGAREA_DIR.mkdir();
             BRANCH_DIR.mkdirs();
             OBJECT_DIR.mkdir();
-            Addition ad = new Addition();
-            ad.saveAddition();
+            Stage stage = new Stage();
+            stage.saveStage();
             try {
                 MASTER_FILE.createNewFile();
                 HEAD_FILE.createNewFile();
-//                REMOVAL_FILE.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -74,14 +70,14 @@ public class Repository {
         System.out.println();
         // Staged Files
         System.out.printf("=== Staged Files ===\n");
-        Addition ad = Addition.fromFile(ADDITION_FILE);
-        for (String filaName : ad.getKeySet()) {
+        Stage stage = Stage.fromFile(STAGE_FILE);
+        for (String filaName : stage.getAdditionKeySet()) {
             System.out.printf("%s\n", filaName);
         }
         System.out.println();
         // Removed Files
         System.out.printf("=== Removed Files ===\n");
-        for (String filaName : ad.getRemovalList()) {
+        for (String filaName : stage.getRemovalList()) {
             System.out.printf("%s\n", filaName);
         }
         System.out.println();
@@ -105,9 +101,9 @@ public class Repository {
         Commit cm = Commit.fromFile(getBranchFile());
 
         if (cm.getFileMap() != null && cm.getFileMap().get(fileName) != null) {
-            Addition ad = Addition.fromFile(ADDITION_FILE);
-            if (ad.getRemovalList().contains(fileName)) {
-                ad.clearAndSave();
+            Stage stage = Stage.fromFile(STAGE_FILE);
+            if (stage.getRemovalList().contains(fileName)) {
+                stage.clearAndSave();
                 return;
             }
             String targetBlobID = cm.getFileMap().get(fileName);
@@ -115,16 +111,15 @@ public class Repository {
                 exitWithSuccess("");
             } else {
                 String blid = makeBlob(fileName);
-//                Addition ad = Addition.fromFile(ADDITION_FILE);
-                ad.addAndSave(fileName, blid);
+                stage.stageToAddition(fileName, blid);
 
             }
         } else {
             // make blob
             String blid = makeBlob(fileName);
             // update staging area addition
-            Addition ad = Addition.fromFile(ADDITION_FILE);
-            ad.addAndSave(fileName, blid);
+            Stage stage = Stage.fromFile(STAGE_FILE);
+            stage.stageToAddition(fileName, blid);
         }
 
     }
@@ -132,27 +127,27 @@ public class Repository {
     public static void handleCommit(String msg) {
         validateGitletDirectory();
 
-        Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-        if (ad.additionSize() == 0 && ad.removalSize() == 0) {
+        Stage stage = Stage.fromFile(Repository.STAGE_FILE);
+        if (stage.additionSize() == 0 && stage.removalSize() == 0) {
             exitWithSuccess("No changes added to the commit.");
         }
         Commit cm = Commit.fromFile(getBranchFile());
         Commit newCm = new Commit(cm, msg);
         // addition
-        if (ad.additionSize() != 0) {
-            for (String key : ad.getKeySet()) {
+        if (stage.additionSize() != 0) {
+            for (String key : stage.getAdditionKeySet()) {
                 // TODO: if has the same
-                newCm.addFile(key, ad.get(key));
+                newCm.addFile(key, stage.get(key));
             }
         }
         // removal
-        if (ad.removalSize() != 0) {
-            for (String fileName : ad.getRemovalList()) {
+        if (stage.removalSize() != 0) {
+            for (String fileName : stage.getRemovalList()) {
                 newCm.removeFile(fileName);
             }
         }
 
-        ad.clearAndSave();
+        stage.clearAndSave();
         newCm.updateIDAndSave();
         // update branch
         writeContents(getBranchFile(), newCm.getID());
@@ -162,14 +157,14 @@ public class Repository {
     public static void handleRm(String[] args) {
         validateGitletDirectory();
         String fileName = args[1];
-        Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-        if (ad.get(fileName) != null) {
-            ad.remove(fileName);
+        Stage stage = Stage.fromFile(Repository.STAGE_FILE);
+        if (stage.get(fileName) != null) {
+            stage.remove(fileName);
             return;
         }
         Commit cm = Commit.fromFile(getBranchFile());
         if (cm.getFileMap().containsKey(fileName)) {
-            ad.stageToRemoval(fileName);
+            stage.stageToRemoval(fileName);
             File file = join(CWD, fileName);
             if (file.exists()) {
                 file.delete();
@@ -228,12 +223,6 @@ public class Repository {
                 if (getCurrentBranchName().equals(branchName)) {
                     exitWithSuccess("No need to checkout the current branch.");
                 }
-                // TODO:  If a working file is untracked in the current branch
-                //  and would be overwritten by the checkout,
-                Addition ad = Addition.fromFile(Repository.ADDITION_FILE);
-//                if (ad.removalSize() != 0) {
-//                    exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
-//                }
                 if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
                     Commit curCm = Commit.fromFile(getBranchFile());
                     Commit targetCm = Commit.fromFile(getBranchFile(branchName));
