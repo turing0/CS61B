@@ -2,7 +2,10 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -82,14 +85,46 @@ public class Repository {
         }
         System.out.println();
 
+        File[] fileList = join(CWD).listFiles(File::isFile);
+        Commit cm = Commit.fromFile(getBranchFile());
         // Modifications Not Staged For Commit
         System.out.printf("=== Modifications Not Staged For Commit ===\n");
-        // TODO
+        for (String fileName : stage.getAdditionKeySet()) {
+            if (!join(fileName).exists()) {
+                System.out.printf("%s (deleted)" , fileName);
+            } else {
+                if (!stage.getRemovalList().contains(fileName) && cm.getFileMap().get(fileName) != null) {
+                    System.out.printf("%s (deleted)" , fileName);
+                }
+            }
+        }
+        if (fileList != null) {
+            for (File f : fileList) {
+                if (stage.get(f.getName()) != null) {
+                    if (!getFileSha1(f.getName()).equals(stage.get(f.getName()))) {
+                        System.out.printf("%s (modified)" , f.getName());
+                    }
+                } else {
+                    if (cm.getFileMap().get(f.getName()) != null &&
+                            !getFileSha1(f.getName()).equals(cm.getFileMap().get(f.getName()))) {
+                        System.out.printf("%s (modified)" , f.getName());
+                    }
+                }
+
+            }
+
+        }
         System.out.println();
 
         // Untracked Files
         System.out.printf("=== Untracked Files ===\n");
-        // TODO
+        if (fileList != null) {
+            for (File f : fileList) {
+                if (stage.get(f.getName()) == null && cm.getFileMap().get(f.getName()) == null) {
+                    System.out.println(f.getName());
+                }
+            }
+        }
         System.out.println();
 
     }
