@@ -283,11 +283,11 @@ class Utils {
     }
 
     public static List<String> getAllBranchName() {
-        List<String> ls = new ArrayList<>();
-        for (File f : Repository.BRANCH_DIR.listFiles()) {
-            ls.add(f.getName());
-        }
-        return ls;
+//        List<String> ls = new ArrayList<>();
+//        for (File f : Repository.BRANCH_DIR.listFiles()) {
+//            ls.add(f.getName());
+//        }
+        return plainFilenamesIn(Repository.BRANCH_DIR);
     }
 
     public static String getDate(long... args) {

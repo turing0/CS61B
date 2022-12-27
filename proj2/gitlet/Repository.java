@@ -2,10 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -85,31 +82,32 @@ public class Repository {
         }
         System.out.println();
 
-        File[] fileList = join(CWD).listFiles(File::isFile);
+//        File[] fileList = join(CWD).listFiles(File::isFile);
+        List<String> fileNames = plainFilenamesIn(CWD);
         Commit cm = Commit.fromFile(getBranchFile());
         // Modifications Not Staged For Commit
         System.out.printf("=== Modifications Not Staged For Commit ===\n");
         for (String fileName : stage.getAdditionKeySet()) {
             if (!join(fileName).exists()) {
-                System.out.printf("%s (deleted)\n" , fileName);
+                System.out.printf("%s (deleted)\n", fileName);
             }
         }
         for (String fileName : cm.getFileMap().keySet()) {
             if (!join(fileName).exists() && !stage.getRemovalList().contains(fileName)) {
-                System.out.printf("%s (deleted)\n" , fileName);
+                System.out.printf("%s (deleted)\n", fileName);
             }
         }
 
-        if (fileList != null) {
-            for (File f : fileList) {
-                if (stage.get(f.getName()) != null) {
-                    if (!getFileSha1(f.getName()).equals(stage.get(f.getName()))) {
-                        System.out.printf("%s (modified)\n" , f.getName());
+        if (fileNames != null) {
+            for (String f : fileNames) {
+                if (stage.get(f) != null) {
+                    if (!getFileSha1(f).equals(stage.get(f))) {
+                        System.out.printf("%s (modified)\n", f);
                     }
                 } else {
-                    if (cm.getFileMap().get(f.getName()) != null &&
-                            !getFileSha1(f.getName()).equals(cm.getFileMap().get(f.getName()))) {
-                        System.out.printf("%s (modified)\n" , f.getName());
+                    if (cm.getFileMap().get(f) != null
+                            && !getFileSha1(f).equals(cm.getFileMap().get(f))) {
+                        System.out.printf("%s (modified)\n", f);
                     }
                 }
             }
@@ -119,10 +117,10 @@ public class Repository {
 
         // Untracked Files
         System.out.printf("=== Untracked Files ===\n");
-        if (fileList != null) {
-            for (File f : fileList) {
-                if (stage.get(f.getName()) == null && cm.getFileMap().get(f.getName()) == null) {
-                    System.out.println(f.getName());
+        if (fileNames != null) {
+            for (String f : fileNames) {
+                if (stage.get(f) == null && cm.getFileMap().get(f) == null) {
+                    System.out.println(f);
                 }
             }
         }
@@ -303,7 +301,33 @@ public class Repository {
         String cmID = getFullID(args[1]);
         checkCommitID(cmID);
         // TODO:
-
+        Commit curCm = Commit.fromFile(getBranchFile());
+        Commit targetCm = Commit.fromID(cmID);
+        for (String fileName : targetCm.getFileMap().keySet()) {
+            if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
+                exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
+        for (String fileName : curCm.getFileMap().keySet()) {
+            if (targetCm.getFileBlobID(fileName) == null) {
+                File f = join(CWD, fileName);
+                f.delete();
+            } else {
+                if (!targetCm.getFileBlobID(fileName).equals(curCm.getFileBlobID(fileName))) {
+                    fileCheckout(fileName, targetCm.getID());
+                }
+            }
+        }
+        // case: new file -> create
+        if (targetCm.getFileMap() != null) {
+            for (String fileName : targetCm.getFileMap().keySet()) {
+                if (curCm.getFileBlobID(fileName) == null) {
+                    fileCheckout(fileName, targetCm.getID());
+                }
+            }
+        }
+        // update branch's head
+        writeContents(getBranchFile(), cmID);
 
     }
     public static void fileCheckout(String fileName, String cmID) {
