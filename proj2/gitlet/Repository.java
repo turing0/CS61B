@@ -2,7 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -213,9 +215,10 @@ public class Repository {
     public static void handleBranch(String[] args) {
         validateGitletDirectory();
         String branchName = args[1];
-        if (join(BRANCH_DIR, branchName).exists()) {
-            exitWithSuccess("A branch with that name already exists.");
-        }
+        checkBranchExist(branchName);
+//        if (join(BRANCH_DIR, branchName).exists()) {
+//            exitWithSuccess("A branch with that name already exists.");
+//        }
         File newBranchFile = join(BRANCH_DIR, branchName);
         try {
             newBranchFile.createNewFile();
@@ -225,12 +228,19 @@ public class Repository {
         }
     }
 
-    public static void handleRmBranch(String[] args) {
-        validateGitletDirectory();
-        String branchName = args[1];
+    public static void checkBranchExist(String branchName) {
         if (!join(BRANCH_DIR, branchName).exists()) {
             exitWithSuccess("A branch with that name does not exist.");
         }
+    }
+
+    public static void handleRmBranch(String[] args) {
+        validateGitletDirectory();
+        String branchName = args[1];
+        checkBranchExist(branchName);
+//        if (!join(BRANCH_DIR, branchName).exists()) {
+//            exitWithSuccess("A branch with that name does not exist.");
+//        }
         if (getCurrentBranchName().equals(branchName)) {
             exitWithSuccess("Cannot remove the current branch.");
         }
@@ -272,9 +282,59 @@ public class Repository {
         }
     }
 
+    public static void checkStageClean() {
+        Stage stage = Stage.fromFile(STAGE_FILE);
+        if (stage.additionSize() != 0 || stage.removalSize() != 0) {
+            exitWithSuccess("You have uncommitted changes.");
+        }
+    }
+
     public static void handleMerge(String[] args) {
         validateGitletDirectory();
         String branchName = args[1];
+        checkStageClean();
+        checkBranchExist(branchName);
+        if (getCurrentBranchName().equals(branchName)) {
+            exitWithSuccess("Cannot merge a branch with itself.");
+        }
+        // If merge would generate an error because the commit that it does has no changes in it,
+        // just let the normal commit error message for this go through???
+
+        Commit cm = Commit.fromFile(getBranchFile());
+        Commit targetCm = Commit.fromFile(getBranchFile(branchName));
+        checkUntrackedOverwritten(cm, targetCm);
+        
+        Set<String> s = new HashSet<>();
+        while (cm != null) {
+            s.add(cm.getID());
+            cm = Commit.fromID(cm.getParentID());
+        }
+        if (s.contains(targetCm.getID())) {
+            exitWithSuccess("Given branch is an ancestor of the current branch.");
+        }
+//        while (cm != null) {
+//            if (cm.getID().equals(targetCm.getID())) {
+//                exitWithSuccess("Given branch is an ancestor of the current branch.");
+//            }
+//            cm = Commit.fromID(cm.getParentID());
+//        }
+        Commit curCm = Commit.fromFile(getBranchFile());
+        // find split point
+        Commit splitCm = null;
+        while (targetCm != null) {
+            if (s.contains(targetCm.getID())) {
+                splitCm = Commit.fromID(targetCm.getID());
+                break;
+            }
+            targetCm = Commit.fromID(targetCm.getParentID());
+        }
+        targetCm = Commit.fromFile(getBranchFile(branchName));
+        if (splitCm.getID().equals(curCm.getID())) {
+            commitCheckout(curCm, targetCm);
+//            updateHEAD(branchName);
+            exitWithSuccess("Current branch fast-forwarded.");
+        }
+
 
 
     }
@@ -292,14 +352,23 @@ public class Repository {
         st.clearAndSave();
     }
 
-    public static void commitCheckout(Commit curCm, Commit targetCm) {
-        // check  if a working file is untracked in the current branch
-        // and would be overwritten by the checkout
+    public static void checkUntrackedOverwritten(Commit curCm, Commit targetCm) {
         for (String fileName : targetCm.getFileMap().keySet()) {
             if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
                 exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
+    }
+
+    public static void commitCheckout(Commit curCm, Commit targetCm) {
+        // check  if a working file is untracked in the current branch
+        // and would be overwritten by the checkout
+        checkUntrackedOverwritten(curCm, targetCm);
+//        for (String fileName : targetCm.getFileMap().keySet()) {
+//            if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
+//                exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
+//            }
+//        }
         for (String fileName : curCm.getFileMap().keySet()) {
             if (targetCm.getFileBlobID(fileName) == null) {
                 File f = join(CWD, fileName);
