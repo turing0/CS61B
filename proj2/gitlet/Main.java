@@ -4,7 +4,7 @@ import static gitlet.Utils.*;
 
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author Turing
  */
 public class Main {
 
@@ -29,9 +29,7 @@ public class Main {
                 Repository.handleAdd(fileName);
                 break;
             case "commit":
-                validateCmMessage(args);
-                String msg = args[1];
-                Repository.handleCommit(msg);
+                Repository.handleCommit(args);
                 break;
             case "rm":
                 Repository.handleRm(args);
@@ -45,6 +43,9 @@ public class Main {
             case "checkout":
                 Repository.handleCheckout(args);
                 break;
+            case "merge":
+                Repository.handleMerge(args);
+                break;
             case "reset":
                 Repository.handleReset(args);
                 break;
@@ -55,7 +56,6 @@ public class Main {
                 Repository.handleLog();
                 break;
             default:
-//                exitWithError(String.format("Unknown command: %s", args[0]));
                 exitWithSuccess("No command with that name exists.");
         }
     }

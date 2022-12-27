@@ -145,7 +145,7 @@ public class Repository {
                 exitWithSuccess("");
             } else {
                 String blid = makeBlob(fileName);
-                stage.stageToAddition(fileName, blid);
+                stage.stageForAddition(fileName, blid);
 
             }
         } else {
@@ -153,14 +153,16 @@ public class Repository {
             String blid = makeBlob(fileName);
             // update staging area addition
             Stage stage = Stage.fromFile(STAGE_FILE);
-            stage.stageToAddition(fileName, blid);
+            stage.stageForAddition(fileName, blid);
         }
 
     }
 
-    public static void handleCommit(String msg) {
+    public static void handleCommit(String[] args) {
+        validateCmMessage(args);
         validateGitletDirectory();
 
+        String msg = args[1];
         Stage stage = Stage.fromFile(Repository.STAGE_FILE);
         if (stage.additionSize() == 0 && stage.removalSize() == 0) {
             exitWithSuccess("No changes added to the commit.");
@@ -198,7 +200,7 @@ public class Repository {
         }
         Commit cm = Commit.fromFile(getBranchFile());
         if (cm.getFileMap().containsKey(fileName)) {
-            stage.stageToRemoval(fileName);
+            stage.stageForRemoval(fileName);
             File file = join(CWD, fileName);
             if (file.exists()) {
                 file.delete();
@@ -260,32 +262,7 @@ public class Repository {
                 if (!readContentsAsString(getBranchFile()).equals(readContentsAsString(getBranchFile(branchName)))) {
                     Commit curCm = Commit.fromFile(getBranchFile());
                     Commit targetCm = Commit.fromFile(getBranchFile(branchName));
-                    // check  if a working file is untracked in the current branch
-                    // and would be overwritten by the checkout
-                    for (String fileName : targetCm.getFileMap().keySet()) {
-                        if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
-                            exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
-                        }
-                    }
-
-                    for (String fileName : curCm.getFileMap().keySet()) {
-                        if (targetCm.getFileBlobID(fileName) == null) {
-                            File f = join(CWD, fileName);
-                            f.delete();
-                        } else {
-                            if (!targetCm.getFileBlobID(fileName).equals(curCm.getFileBlobID(fileName))) {
-                                fileCheckout(fileName, targetCm.getID());
-                            }
-                        }
-                    }
-                    // case: new file -> create
-                    if (targetCm.getFileMap() != null) {
-                        for (String fileName : targetCm.getFileMap().keySet()) {
-                            if (curCm.getFileBlobID(fileName) == null) {
-                                fileCheckout(fileName, targetCm.getID());
-                            }
-                        }
-                    }
+                    commitCheckout(curCm, targetCm);
                 }
                 // update HEAD
                 updateHEAD(branchName);
@@ -293,6 +270,12 @@ public class Repository {
             default:
                 break;
         }
+    }
+
+    public static void handleMerge(String[] args) {
+        validateGitletDirectory();
+        String branchName = args[1];
+
 
     }
 
@@ -300,9 +283,18 @@ public class Repository {
         validateGitletDirectory();
         String cmID = getFullID(args[1]);
         checkCommitID(cmID);
-        // TODO:
         Commit curCm = Commit.fromFile(getBranchFile());
         Commit targetCm = Commit.fromID(cmID);
+        commitCheckout(curCm, targetCm);
+        // update branch's head
+        writeContents(getBranchFile(), cmID);
+        Stage st = Stage.fromFile(STAGE_FILE);
+        st.clearAndSave();
+    }
+
+    public static void commitCheckout(Commit curCm, Commit targetCm) {
+        // check  if a working file is untracked in the current branch
+        // and would be overwritten by the checkout
         for (String fileName : targetCm.getFileMap().keySet()) {
             if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
                 exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
@@ -326,11 +318,6 @@ public class Repository {
                 }
             }
         }
-        // update branch's head
-        writeContents(getBranchFile(), cmID);
-        Stage st = Stage.fromFile(STAGE_FILE);
-        st.clearAndSave();
-
     }
     public static void fileCheckout(String fileName, String cmID) {
         cmID = getFullID(cmID);

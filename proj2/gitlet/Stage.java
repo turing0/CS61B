@@ -24,12 +24,12 @@ public class Stage implements Serializable {
         return removalList;
     }
 
-    public void stageToRemoval(String fileName) {
+    public void stageForRemoval(String fileName) {
         removalList.add(fileName);
         saveStage();
     }
 
-    public void stageToAddition(String fileName, String blobid) {
+    public void stageForAddition(String fileName, String blobid) {
         additionMap.put(fileName, blobid);
         saveStage();
     }
