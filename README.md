@@ -19,7 +19,7 @@ UC berkeley CS Course Map：https://hkn.eecs.berkeley.edu/courseguides
 
 1. 创建一个 Github 仓库
 
-2. 使用 Git 的 `git clone` 命令 把 `repo` 拉到本地
+2. 使用 Git 的 `git clone` 命令 把 `repo` 拉到本地（换成你自己的 repo 地址）
 
    ```bash
    git clone https://github.com/turing0/CS61B.git
