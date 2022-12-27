@@ -23,14 +23,14 @@ public class Commit implements Serializable {
     private String id;
     private final String message;
     private final String timestamp;
-    private final String parent;
+    private final List<String> parents;
     private Map<String, String> fileMap;
 
     public Commit(Commit cm, String msg) {
         message = msg;
         if (cm == null) {
             timestamp = getDate(0);
-            parent = null;
+            parents = new ArrayList<>();
             fileMap = new HashMap<>();
             List<String> ls = new ArrayList<>(fileMap.values());
             ls.add(message);
@@ -38,10 +38,20 @@ public class Commit implements Serializable {
             id = sha1(ls);
         } else {
             timestamp = getDate();
-            parent = cm.getID();
+            parents = List.of(cm.getID());
+//            parent = cm.getID();
             fileMap = new HashMap<>(cm.getFileMap());
             id = cm.getID();
         }
+    }
+
+    public Commit(Commit cm, Commit cm2, String msg) {
+        message = msg;
+        parents = List.of(cm.getID(), cm2.getID());
+        fileMap = new HashMap<>();
+        timestamp = getDate();
+        fileMap = new HashMap<>(cm.getFileMap());
+        id = cm.getID();
     }
 
     public void addFile(String fileName, String id) {
@@ -69,20 +79,22 @@ public class Commit implements Serializable {
 
     public void updateIDAndSave() {
         List<String> ls = new ArrayList<>(fileMap.values());
-        ls.add(parent);
+        ls.addAll(parents);
         ls.add(message);
         ls.add(timestamp);
         id = sha1(ls);
         saveCommit();
     }
 
-
     public String getID() {
         return id;
     }
 
     public String getParentID() {
-        return parent;
+        if (parents.size() == 0) {
+            return null;
+        }
+        return parents.get(0);
     }
     public String getMessage() {
         return message;

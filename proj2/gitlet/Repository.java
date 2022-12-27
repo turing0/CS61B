@@ -162,8 +162,8 @@ public class Repository {
     }
 
     public static void handleCommit(String[] args) {
-        validateCmMessage(args);
         validateGitletDirectory();
+        validateCmMessage(args);
 
         String msg = args[1];
         Stage stage = Stage.fromFile(Repository.STAGE_FILE);
@@ -376,8 +376,38 @@ public class Repository {
                 }
             }
         }
+        // automatically commit
+        mergeCommit(branchName);
 
+    }
 
+    public static void mergeCommit(String targetBranch) {
+        String msg = String.format("Merged %s into %s.", targetBranch, getCurrentBranchName());
+        Stage stage = Stage.fromFile(Repository.STAGE_FILE);
+        if (stage.additionSize() == 0 && stage.removalSize() == 0) {
+            exitWithSuccess("No changes added to the commit.");
+        }
+        Commit cm = Commit.fromFile(getBranchFile());
+        Commit cm2 = Commit.fromFile(getBranchFile(targetBranch));
+        Commit newMgCm = new Commit(cm, cm2, msg);
+        // addition
+        if (stage.additionSize() != 0) {
+            for (String key : stage.getAdditionKeySet()) {
+                // TODO: if has the same
+                newMgCm.addFile(key, stage.get(key));
+            }
+        }
+        // removal
+        if (stage.removalSize() != 0) {
+            for (String fileName : stage.getRemovalList()) {
+                newMgCm.removeFile(fileName);
+            }
+        }
+
+        stage.clearAndSave();
+        newMgCm.updateIDAndSave();
+        // update branch
+        writeContents(getBranchFile(), newMgCm.getID());
     }
 
     public static void handleReset(String[] args) {
