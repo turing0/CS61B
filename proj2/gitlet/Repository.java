@@ -91,26 +91,27 @@ public class Repository {
         System.out.printf("=== Modifications Not Staged For Commit ===\n");
         for (String fileName : stage.getAdditionKeySet()) {
             if (!join(fileName).exists()) {
-                System.out.printf("%s (deleted)" , fileName);
-            } else {
-                if (!stage.getRemovalList().contains(fileName) && cm.getFileMap().get(fileName) != null) {
-                    System.out.printf("%s (deleted)" , fileName);
-                }
+                System.out.printf("%s (deleted)\n" , fileName);
             }
         }
+        for (String fileName : cm.getFileMap().keySet()) {
+            if (!join(fileName).exists() && !stage.getRemovalList().contains(fileName)) {
+                System.out.printf("%s (deleted)\n" , fileName);
+            }
+        }
+
         if (fileList != null) {
             for (File f : fileList) {
                 if (stage.get(f.getName()) != null) {
                     if (!getFileSha1(f.getName()).equals(stage.get(f.getName()))) {
-                        System.out.printf("%s (modified)" , f.getName());
+                        System.out.printf("%s (modified)\n" , f.getName());
                     }
                 } else {
                     if (cm.getFileMap().get(f.getName()) != null &&
                             !getFileSha1(f.getName()).equals(cm.getFileMap().get(f.getName()))) {
-                        System.out.printf("%s (modified)" , f.getName());
+                        System.out.printf("%s (modified)\n" , f.getName());
                     }
                 }
-
             }
 
         }
