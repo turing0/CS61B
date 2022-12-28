@@ -54,8 +54,8 @@ public class Commit implements Serializable {
         id = cm.getID();
     }
 
-    public void addFile(String fileName, String id) {
-        fileMap.put(fileName, id);
+    public void addFile(String fileName, String blobid) {
+        fileMap.put(fileName, blobid);
     }
 
     public void removeFile(String fileName) {

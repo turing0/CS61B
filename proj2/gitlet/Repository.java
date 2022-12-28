@@ -331,6 +331,7 @@ public class Repository {
         Map<String, String> targetFileMap = targetCm.getFileMap();
         Set<String> allFiles = new HashSet<>();
         Stage stage = Stage.fromFile(STAGE_FILE);
+        boolean conflictExist = false;
         for (String file : curFileMap.keySet()) {
             allFiles.add(file);
         }
@@ -363,7 +364,7 @@ public class Repository {
                     }
                 }
 
-                dealConflict(splitCm, curCm, targetCm, fileName); // check rule 3
+                conflictExist = dealConflict(splitCm, curCm, targetCm, fileName); // check rule 3
             } else {
                 if (!splitFileMap.containsKey(fileName) && !targetFileMap.containsKey(fileName) && curFileMap.containsKey(fileName)) {
                     continue; // rule 4
@@ -375,20 +376,39 @@ public class Repository {
                 }
             }
         }
+        if (conflictExist) {
+            System.out.println("Encountered a merge conflict.");
+        }
         // automatically commit
         mergeCommit(branchName);
     }
 
-    public static void dealConflict(Commit splitCm, Commit curCm, Commit targetCm, String fileName) {
+    public static boolean dealConflict(Commit splitCm, Commit curCm, Commit targetCm, String fileName) {
+        boolean conflictExist = false;
         if (!targetCm.getFileMap().containsKey(fileName)) { // modified in head, deleted in target
-
+            conflictExist = true;
         } else if (!curCm.getFileMap().containsKey(fileName)) { // modified in target, deleted in head
-
+            conflictExist = true;
         } else if (!curCm.getFileMap().get(fileName).equals(targetCm.getFileMap().get(fileName))) { // both modified
-
+            conflictExist = true;
         }
-
-        System.out.println("Encountered a merge conflict.");
+        if (conflictExist) {
+            Stage stage = Stage.fromFile(STAGE_FILE);
+            String contents1 = "";
+            String contents2 = "";
+            if (curCm.getFileMap().containsKey(fileName)) {
+                contents1 = readContentsAsString(join(CWD, fileName));
+            }
+            if (targetCm.getFileMap().containsKey(fileName)) {
+                Blob bl = Blob.fromID(targetCm.getFileBlobID(fileName));
+                contents2 = bl.getContents();
+            }
+            String contents = String.format("<<<<<<< HEAD\n%s=======\n%s>>>>>>>", contents1, contents2);
+            writeContents(join(CWD, fileName), contents);
+            String blid = makeBlob(fileName);
+            stage.stageForAddition(fileName, blid);
+        }
+        return conflictExist;
     }
 
     public static void mergeCommit(String targetBranch) {
