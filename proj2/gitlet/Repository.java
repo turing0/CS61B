@@ -64,7 +64,7 @@ public class Repository {
         validateGitletDirectory();
         // Branches
         String curBranch = getCurrentBranchName();
-        System.out.printf("=== Branches ===\n");
+        System.out.print("=== Branches ===\n");
         List<String> branches = getAllBranchName();
         for (String br : branches) {
             if (br.equals(curBranch)) {
@@ -74,24 +74,23 @@ public class Repository {
         }
         System.out.println();
         // Staged Files
-        System.out.printf("=== Staged Files ===\n");
+        System.out.print("=== Staged Files ===\n");
         Stage stage = Stage.fromFile(STAGE_FILE);
         for (String filaName : stage.getAdditionKeySet()) {
             System.out.printf("%s\n", filaName);
         }
         System.out.println();
         // Removed Files
-        System.out.printf("=== Removed Files ===\n");
+        System.out.print("=== Removed Files ===\n");
         for (String filaName : stage.getRemovalList()) {
             System.out.printf("%s\n", filaName);
         }
         System.out.println();
 
-//        File[] fileList = join(CWD).listFiles(File::isFile);
         List<String> fileNames = plainFilenamesIn(CWD);
         Commit cm = Commit.fromFile(getBranchFile());
         // Modifications Not Staged For Commit
-        System.out.printf("=== Modifications Not Staged For Commit ===\n");
+        System.out.print("=== Modifications Not Staged For Commit ===\n");
         for (String fileName : stage.getAdditionKeySet()) {
             if (!join(fileName).exists()) {
                 System.out.printf("%s (deleted)\n", fileName);
@@ -121,7 +120,7 @@ public class Repository {
         System.out.println();
 
         // Untracked Files
-        System.out.printf("=== Untracked Files ===\n");
+        System.out.print("=== Untracked Files ===\n");
         if (fileNames != null) {
             for (String f : fileNames) {
                 if (stage.get(f) == null && cm.getFileMap().get(f) == null) {
@@ -177,7 +176,7 @@ public class Repository {
         // addition
         if (stage.additionSize() != 0) {
             for (String key : stage.getAdditionKeySet()) {
-                // TODO: if has the same
+                // if has the same
                 newCm.addFile(key, stage.get(key));
             }
         }
@@ -288,6 +287,18 @@ public class Repository {
         }
     }
 
+    public static Set<String> getAllParents(Commit cm) {
+        Set<String> s = new HashSet<>();
+        while (cm != null) {
+            s.add(cm.getID());
+            if (cm.getSencondParentID() != null) {
+                s.addAll(getAllParents(Commit.fromID(cm.getSencondParentID())));
+            }
+            cm = Commit.fromID(cm.getParentID());
+        }
+        return s;
+    }
+
     public static void handleMerge(String[] args) {
         validateGitletDirectory();
         String branchName = args[1];
@@ -301,11 +312,12 @@ public class Repository {
         Commit targetCm = Commit.fromFile(getBranchFile(branchName));
         checkUntrackedOverwritten(cm, targetCm);
 
-        Set<String> s = new HashSet<>();
-        while (cm != null) {
-            s.add(cm.getID());
-            cm = Commit.fromID(cm.getParentID());
-        }
+//        Set<String> s = new HashSet<>();
+        Set<String> s = getAllParents(cm);
+//        while (cm != null) {
+//            s.add(cm.getID());
+//            cm = Commit.fromID(cm.getParentID());
+//        }
         if (s.contains(targetCm.getID())) {
             exitWithSuccess("Given branch is an ancestor of the current branch.");
         }
@@ -462,8 +474,7 @@ public class Repository {
     }
 
     public static void commitCheckout(Commit curCm, Commit targetCm) {
-        // check  if a working file is untracked in the current branch
-        // and would be overwritten by the checkout
+        // check  if a working file is untracked in the current branch and would be overwritten by the checkout
         checkUntrackedOverwritten(curCm, targetCm);
         for (String fileName : curCm.getFileMap().keySet()) {
             if (targetCm.getFileBlobID(fileName) == null) {

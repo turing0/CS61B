@@ -89,13 +89,19 @@ public class Commit implements Serializable {
     public String getID() {
         return id;
     }
-
     public String getParentID() {
         if (parents.size() == 0) {
             return null;
         }
         return parents.get(0);
     }
+    public String getSencondParentID() {
+        if (parents.size() < 2) {
+            return null;
+        }
+        return parents.get(1);
+    }
+
     public String getMessage() {
         return message;
     }
