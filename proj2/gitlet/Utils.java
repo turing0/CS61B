@@ -355,15 +355,15 @@ class Utils {
         if (id.length() == 40) {
             return id;
         }
-        File filePath = join(Repository.OBJECT_DIR, id.substring(0, 2));
-        if (filePath.exists()) {
-            for (File f : filePath.listFiles()) {
-                if (f.getName().substring(0, id.length() - 2).equals(id.substring(2))) {
-                    return id.substring(0, 2) + f.getName();
-                }
-            }
+//        File filePath = join(Repository.COMMIT_DIR, id.substring(0, 2));
+        List<String> fileNames = plainFilenamesIn(Repository.COMMIT_DIR);
 
+        for (String fileName : fileNames) {
+            if (fileName.startsWith(id)) {
+                return fileName;
+            }
         }
+
         return null;
     }
 
