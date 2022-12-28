@@ -54,6 +54,8 @@ public class Main {
                 break;
             case "log":
                 Repository.handleLog();
+            case "global-log":
+                Repository.handleGlobalLog();
                 break;
             default:
                 exitWithSuccess("No command with that name exists.");

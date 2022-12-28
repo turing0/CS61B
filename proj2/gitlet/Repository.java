@@ -29,6 +29,7 @@ public class Repository {
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
     public static final File STAGE_FILE = join(GITLET_DIR, "INDEX");
     public static final File OBJECT_DIR = join(GITLET_DIR, "objects");
+    public static final File COMMIT_DIR = join(OBJECT_DIR, "commits");
     public static final File MASTER_FILE = join(BRANCH_DIR, "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
@@ -40,6 +41,7 @@ public class Repository {
             GITLET_DIR.mkdir();
             BRANCH_DIR.mkdirs();
             OBJECT_DIR.mkdir();
+            COMMIT_DIR.mkdir();
             Stage stage = new Stage();
             stage.saveStage();
             try {
@@ -483,15 +485,17 @@ public class Repository {
     public static void handleFind(String[] args) {
         validateGitletDirectory();
         String msg = args[1];
-        Commit cm = Commit.fromFile(getBranchFile());
+
         boolean findFlag = false;
-        while (cm != null) {
+        List<String> fileNames = plainFilenamesIn(COMMIT_DIR);
+        for (String fileName : fileNames) {
+            Commit cm = Commit.fromFile(join(COMMIT_DIR, fileName));
             if (cm.getMessage().equals(msg)) {
                 findFlag = true;
                 System.out.println(cm.getID());
             }
-            cm = Commit.fromID(cm.getParentID());
         }
+
         if (!findFlag) {
             exitWithSuccess("Found no commit with that message.");
         }
@@ -503,6 +507,17 @@ public class Repository {
         while (cm != null) {
             System.out.println(cm);
             cm = Commit.fromID(cm.getParentID());
+        }
+    }
+
+    public static void handleGlobalLog() {
+        validateGitletDirectory();
+
+        List<String> fileNames = plainFilenamesIn(COMMIT_DIR);
+
+        for (String fileName : fileNames) {
+            Commit cm = Commit.fromFile(join(COMMIT_DIR, fileName));
+            System.out.println(cm);
         }
     }
 

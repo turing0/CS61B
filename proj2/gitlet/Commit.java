@@ -66,7 +66,7 @@ public class Commit implements Serializable {
         if (id == null) {
             return null;
         }
-        File objectFile = getObjectFile(id);
+        File objectFile = getCmObjectFile(id);
         if (objectFile == null) {
             return null;
         }
@@ -112,7 +112,7 @@ public class Commit implements Serializable {
     }
 
     public void saveCommit() {
-        createObjectFile(id, this);
+        createCmObjectFile(id, this);
     }
 
     @Override

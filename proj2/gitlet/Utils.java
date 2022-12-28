@@ -321,12 +321,28 @@ class Utils {
         }
         return null;
     }
+    public static File getCmObjectFile(String id) {
+        File file = join(Repository.COMMIT_DIR, id);
+        if (file.exists()) {
+            return file;
+        }
+        return null;
+    }
     public static void createObjectFile(String id, Serializable obj) {
         File filePath = join(Repository.OBJECT_DIR, id.substring(0, 2));
         if (!filePath.exists()) {
             filePath.mkdir();
         }
         File file = join(filePath, id.substring(2));
+        try {
+            file.createNewFile();
+            writeObject(file, obj);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void createCmObjectFile(String id, Serializable obj) {
+        File file = join(Repository.COMMIT_DIR, id);
         try {
             file.createNewFile();
             writeObject(file, obj);
