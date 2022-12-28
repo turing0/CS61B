@@ -294,8 +294,6 @@ public class Repository {
         if (getCurrentBranchName().equals(branchName)) {
             exitWithSuccess("Cannot merge a branch with itself.");
         }
-        // If merge would generate an error because the commit that it does has no changes in it,
-        // just let the normal commit error message for this go through???
 
         Commit cm = Commit.fromFile(getBranchFile());
         Commit targetCm = Commit.fromFile(getBranchFile(branchName));
@@ -343,6 +341,7 @@ public class Repository {
                 if (curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
                     if (!splitFileMap.get(fileName).equals(targetFileMap.get(fileName)) && splitFileMap.get(fileName).equals(curFileMap.get(fileName))) {
                         stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 1
+                        fileCheckout(fileName, targetCm.getID());
                         continue;
                     }
                     if (!splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && splitFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
@@ -367,23 +366,19 @@ public class Repository {
                         continue; // rule 7
                     }
                 }
-
             } else {
                 if (!splitFileMap.containsKey(fileName) && !targetFileMap.containsKey(fileName) && curFileMap.containsKey(fileName)) {
                     continue; // rule 4
                 }
                 if (!splitFileMap.containsKey(fileName) && !curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
-//                    System.out.printf("match rule 5, file: %s %s\n", fileName, targetFileMap.get(fileName));
                     stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 5
                     fileCheckout(fileName, targetCm.getID());
                     continue;
                 }
             }
         }
-//        stage.saveStage();
         // automatically commit
         mergeCommit(branchName);
-
     }
 
     public static void mergeCommit(String targetBranch) {
@@ -398,16 +393,12 @@ public class Repository {
         // addition
         if (stage.additionSize() != 0) {
             for (String key : stage.getAdditionKeySet()) {
-//                System.out.printf("To addition: %s %s\n", key, stage.get(key));
-                // TODO: if has the same
                 newMgCm.addFile(key, stage.get(key));
-//                fileCheckout(key, stage.get(key));
             }
         }
         // removal
         if (stage.removalSize() != 0) {
             for (String fileName : stage.getRemovalList()) {
-//                System.out.printf("To removal: %s\n", fileName);
                 newMgCm.removeFile(fileName);
             }
         }
@@ -444,11 +435,6 @@ public class Repository {
         // check  if a working file is untracked in the current branch
         // and would be overwritten by the checkout
         checkUntrackedOverwritten(curCm, targetCm);
-//        for (String fileName : targetCm.getFileMap().keySet()) {
-//            if (join(CWD, fileName).exists() && !curCm.getFileMap().containsKey(fileName)) {
-//                exitWithSuccess("There is an untracked file in the way; delete it, or add and commit it first.");
-//            }
-//        }
         for (String fileName : curCm.getFileMap().keySet()) {
             if (targetCm.getFileBlobID(fileName) == null) {
                 File f = join(CWD, fileName);
