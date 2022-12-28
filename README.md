@@ -37,7 +37,7 @@ UC berkeley CS Course Map：https://hkn.eecs.berkeley.edu/courseguides
    git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
    ```
 
-5. 运行此命令
+5. 运行此命令 pull 代码
 
    ```bash
    git pull skeleton master
