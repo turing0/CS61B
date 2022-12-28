@@ -403,7 +403,7 @@ public class Repository {
                 Blob bl = Blob.fromID(targetCm.getFileBlobID(fileName));
                 contents2 = bl.getContents();
             }
-            String contents = String.format("<<<<<<< HEAD\n%s=======\n%s>>>>>>>", contents1, contents2);
+            String contents = String.format("<<<<<<< HEAD\n%s=======\n%s>>>>>>>\n", contents1, contents2);
             writeContents(join(CWD, fileName), contents);
             String blid = makeBlob(fileName);
             stage.stageForAddition(fileName, blid);
