@@ -357,13 +357,11 @@ class Utils {
         }
 //        File filePath = join(Repository.COMMIT_DIR, id.substring(0, 2));
         List<String> fileNames = plainFilenamesIn(Repository.COMMIT_DIR);
-
         for (String fileName : fileNames) {
             if (fileName.startsWith(id)) {
                 return fileName;
             }
         }
-
         return null;
     }
 

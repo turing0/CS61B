@@ -489,7 +489,7 @@ public class Repository {
         boolean findFlag = false;
         List<String> fileNames = plainFilenamesIn(COMMIT_DIR);
         for (String fileName : fileNames) {
-            Commit cm = Commit.fromFile(join(COMMIT_DIR, fileName));
+            Commit cm = Commit.fromID(fileName);
             if (cm.getMessage().equals(msg)) {
                 findFlag = true;
                 System.out.println(cm.getID());
@@ -516,7 +516,7 @@ public class Repository {
         List<String> fileNames = plainFilenamesIn(COMMIT_DIR);
 
         for (String fileName : fileNames) {
-            Commit cm = Commit.fromFile(join(COMMIT_DIR, fileName));
+            Commit cm = Commit.fromID(fileName);
             System.out.println(cm);
         }
     }
