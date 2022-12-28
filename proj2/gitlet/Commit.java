@@ -123,6 +123,11 @@ public class Commit implements Serializable {
 
     @Override
     public String toString() {
+        if (parents.size() == 2) {
+            return String.format(
+                    "===\ncommit %s\nMerge: %s %s\nDate: %s\n%s\n",
+                    id, getParentID(), getSencondParentID(), timestamp, message);
+        }
         return String.format(
                 "===\ncommit %s\nDate: %s\n%s\n",
                 id, timestamp, message);
