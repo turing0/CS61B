@@ -340,6 +340,7 @@ public class Repository {
         // 7 rules
         for (String fileName : allFiles) {
             if (splitFileMap.containsKey(fileName)) {
+
                 if (curFileMap.containsKey(fileName) && targetFileMap.containsKey(fileName)) {
                     if (!splitFileMap.get(fileName).equals(targetFileMap.get(fileName)) && splitFileMap.get(fileName).equals(curFileMap.get(fileName))) {
                         stage.stageForAddition(fileName, targetFileMap.get(fileName)); // rule 1
@@ -349,16 +350,9 @@ public class Repository {
                     if (!splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && splitFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
                         continue; // rule 2
                     }
-                    if (!splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && !splitFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
-                        if (!curFileMap.get(fileName).equals(targetFileMap.get(fileName))) {
-                            // TODO: rule 3b - conflict
-
-                        }
-                    }
                 }
                 if (curFileMap.containsKey(fileName)) { // this file in head and split, not in target
                     if (splitFileMap.get(fileName).equals(curFileMap.get(fileName)) && !targetFileMap.containsKey(fileName)) {
-//                        System.out.printf("match rule 6: %s\n", fileName);
                         stage.stageForRemoval(fileName); // rule 6
                         join(CWD, fileName).delete();
                         continue;
@@ -368,6 +362,8 @@ public class Repository {
                         continue; // rule 7
                     }
                 }
+
+                dealConflict(splitCm, curCm, targetCm, fileName); // check rule 3
             } else {
                 if (!splitFileMap.containsKey(fileName) && !targetFileMap.containsKey(fileName) && curFileMap.containsKey(fileName)) {
                     continue; // rule 4
@@ -381,6 +377,18 @@ public class Repository {
         }
         // automatically commit
         mergeCommit(branchName);
+    }
+
+    public static void dealConflict(Commit splitCm, Commit curCm, Commit targetCm, String fileName) {
+        if (!targetCm.getFileMap().containsKey(fileName)) { // modified in head, deleted in target
+
+        } else if (!curCm.getFileMap().containsKey(fileName)) { // modified in target, deleted in head
+
+        } else if (!curCm.getFileMap().get(fileName).equals(targetCm.getFileMap().get(fileName))) { // both modified
+
+        }
+
+        System.out.println("Encountered a merge conflict.");
     }
 
     public static void mergeCommit(String targetBranch) {
