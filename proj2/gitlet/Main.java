@@ -54,6 +54,7 @@ public class Main {
                 break;
             case "log":
                 Repository.handleLog();
+                break;
             case "global-log":
                 Repository.handleGlobalLog();
                 break;
