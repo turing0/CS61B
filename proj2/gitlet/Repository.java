@@ -150,7 +150,6 @@ public class Repository {
             } else {
                 String blid = makeBlob(fileName);
                 stage.stageForAddition(fileName, blid);
-
             }
         } else {
             // make blob
@@ -312,12 +311,7 @@ public class Repository {
         Commit targetCm = Commit.fromFile(getBranchFile(branchName));
         checkUntrackedOverwritten(cm, targetCm);
 
-//        Set<String> s = new HashSet<>();
         Set<String> s = getAllParents(cm);
-//        while (cm != null) {
-//            s.add(cm.getID());
-//            cm = Commit.fromID(cm.getParentID());
-//        }
         if (s.contains(targetCm.getID())) {
             exitWithSuccess("Given branch is an ancestor of the current branch.");
         }
