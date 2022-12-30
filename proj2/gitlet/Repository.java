@@ -570,7 +570,8 @@ public class Repository {
         try {
             File f = join(REMOTE_DIR, remoteName, "path");
             f.createNewFile();
-            writeContents(f, join(remoteNameDirectory).getParent().replace("/", File.separator));
+//            writeContents(f, join(remoteNameDirectory).getParent().replace("/", File.separator));
+            writeContents(f, join(remoteNameDirectory).getAbsolutePath().replace("/", File.separator));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
