@@ -265,6 +265,13 @@ public class Repository {
                 break;
             case 2:
                 String branchName = args[1];
+                if (branchName.contains("/")) {
+                    Commit curCm = Commit.fromFile(getBranchFile());
+                    Commit targetCm = Commit.fromFile(join(REMOTE_DIR, branchName));
+                    commitCheckout(curCm, targetCm);
+                    // update HEAD
+                    updateHEAD(branchName);
+                }
                 if (!join(BRANCH_DIR, branchName).exists()) {
                     exitWithSuccess("No such branch exists.");
                 }
@@ -660,11 +667,12 @@ public class Repository {
             }
         }
         // create new branch
-        String branchName = String.format("%s/%s", remoteName, remoteBranchName);
 //        if (join(BRANCH_DIR, branchName).exists()) {
 //            exitWithSuccess("A branch with that name already exists.");
 //        }
-        File newBranchFile = join(BRANCH_DIR, branchName);
+        File newBranchPath = join(REMOTE_DIR, remoteName);
+        newBranchPath.mkdir();
+        File newBranchFile = join(newBranchPath, remoteBranchName);
         try {
             newBranchFile.createNewFile();
             writeContents(newBranchFile, curCmRemote.getID());
