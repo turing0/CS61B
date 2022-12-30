@@ -25,6 +25,7 @@ public class Commit implements Serializable {
     private final String timestamp;
     private final List<String> parents;
     private Map<String, String> fileMap;
+    private static final long serialVersionUID = 6529689098266657690L;
 
     public Commit(Commit cm, String msg) {
         message = msg;
@@ -75,6 +76,12 @@ public class Commit implements Serializable {
     public static Commit fromFile(File f) {
         String id = readContentsAsString(f);
         return fromID(id);
+    }
+    public static Commit fromOtherFile(String remotePath, File f) {
+//        System.out.println(readContentsAsString(f));
+        File objectFile = join(remotePath,".gitlet/objects/commits",  readContentsAsString(f));
+//        System.out.println(objectFile);
+        return readObject(objectFile, Commit.class);
     }
 
     public void updateIDAndSave() {

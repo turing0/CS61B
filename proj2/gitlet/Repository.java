@@ -271,6 +271,7 @@ public class Repository {
                     commitCheckout(curCm, targetCm);
                     // update HEAD
                     updateHEAD(branchName);
+                    break;
                 }
                 if (!join(BRANCH_DIR, branchName).exists()) {
                     exitWithSuccess("No such branch exists.");
@@ -645,7 +646,10 @@ public class Repository {
             exitWithSuccess("That remote does not have that branch.");
         }
         // copy ...
-        Commit curCmRemote = Commit.fromFile(join(join(remotePath, ".gitlet/refs/heads", remoteBranchName)));
+//        System.out.println(remotePath);
+//        System.out.println(getBranchFile(remoteBranchName, remotePath));
+//        Commit curCmRemote = Commit.fromFile(getBranchFile(remoteBranchName, remotePath));
+        Commit curCmRemote = Commit.fromOtherFile(remotePath, getBranchFile(remoteBranchName, remotePath));
         Set<String> allCommits = getAllParents(curCmRemote);
         for (String cmID : allCommits) {
             Path src = join(remotePath, ".gitlet/objects/commits", cmID).toPath();
@@ -655,12 +659,15 @@ public class Repository {
                 Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
                 Commit cm = Commit.fromID(cmID);
                 for (String blid : cm.getFileMap().values()) {
-                    Blob bl = Blob.fromID(blid);
-                    createObjectFile(blid, bl);
-//                    Path srcBl = join(remotePath, ".gitlet/objects", blid.substring(0, 2), blid.substring(2)).toPath();
-//                    Path dstBl = join(OBJECT_DIR, cmID).toPath();
-//
-//                    Files.copy(srcBl, dstBl, StandardCopyOption.REPLACE_EXISTING);
+//                    Blob bl = Blob.fromID(blid);
+//                    createObjectFile(blid, bl);
+                    Path srcBl = join(remotePath, ".gitlet/objects", blid.substring(0, 2), blid.substring(2)).toPath();
+                    File filePath = join(Repository.OBJECT_DIR, blid.substring(0, 2));
+                    filePath.mkdir();
+                    File file = join(filePath, blid.substring(2));
+                    Path dstBl = file.toPath();
+
+                    Files.copy(srcBl, dstBl, StandardCopyOption.REPLACE_EXISTING);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -670,9 +677,11 @@ public class Repository {
 //        if (join(BRANCH_DIR, branchName).exists()) {
 //            exitWithSuccess("A branch with that name already exists.");
 //        }
+        curCmRemote = Commit.fromFile(join(remotePath, ".gitlet/refs/heads", remoteBranchName));
         File newBranchPath = join(REMOTE_DIR, remoteName);
         newBranchPath.mkdir();
         File newBranchFile = join(newBranchPath, remoteBranchName);
+//        System.out.println(newBranchFile.getPath());
         try {
             newBranchFile.createNewFile();
             writeContents(newBranchFile, curCmRemote.getID());
