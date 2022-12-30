@@ -27,6 +27,7 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     public static final File BRANCH_DIR = join(GITLET_DIR, "refs", "heads");
+    public static final File REMOTE_DIR = join(GITLET_DIR, "refs", "remotes");
     public static final File STAGE_FILE = join(GITLET_DIR, "INDEX");
     public static final File OBJECT_DIR = join(GITLET_DIR, "objects");
     public static final File COMMIT_DIR = join(OBJECT_DIR, "commits");
@@ -40,6 +41,7 @@ public class Repository {
         } else {
             GITLET_DIR.mkdir();
             BRANCH_DIR.mkdirs();
+            REMOTE_DIR.mkdirs();
             OBJECT_DIR.mkdir();
             COMMIT_DIR.mkdir();
             Stage stage = new Stage();
@@ -554,6 +556,73 @@ public class Repository {
         }
     }
 
+    public static void handleAddRemote(String[] args) {
+        validateGitletDirectory();
+        String remoteName = args[1];
+        String remoteNameDirectory = args[2];
+        if (join(REMOTE_DIR, remoteName).exists()) {
+            exitWithSuccess("A remote with that name already exists.");
+        }
+        join(REMOTE_DIR, remoteName).mkdir();
+//        System.out.println(join(remoteNameDirectory).getParent());
+//        System.out.println(join(remoteNameDirectory).getAbsolutePath());
+        try {
+            File f = join(REMOTE_DIR, remoteName, "path");
+            f.createNewFile();
+            writeContents(f, join(remoteNameDirectory).getParent());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void handleRemoveRemote(String[] args) {
+        validateGitletDirectory();
+        String remoteName = args[1];
+        if (!join(REMOTE_DIR, remoteName).exists()) {
+            exitWithSuccess("A remote with that name does not exist.");
+        }
+        File path = join(REMOTE_DIR, remoteName);
+        for (String f : plainFilenamesIn(path)) {
+            join(path, f).delete();
+        }
+        path.delete();
+    }
+    public static void validateRemoteGitletDirectory(String remotePath) {
+        if (!join(remotePath, ".gitlet").exists()) {
+            exitWithSuccess("Remote directory not found.");
+        }
+    }
+    public static void handlePush(String[] args) {
+        validateGitletDirectory();
+        String remoteName = args[1];
+        String remoteBranchName = args[2];
+        String remotePath = readContentsAsString(join(REMOTE_DIR, remoteName, "path"));
+        validateRemoteGitletDirectory(remotePath);
+
+        String remoteHeadID = Commit.fromFile(getBranchFile(remoteBranchName, remotePath)).getID();
+        Set<String> allCommits = getAllParents(Commit.fromFile(getBranchFile()));
+        if (!allCommits.contains(remoteHeadID)) {
+            exitWithSuccess("Please pull down remote changes before pushing.");
+        }
+        // TODO
+
+    }
+
+    public static void handleFetch(String[] args) {
+        validateGitletDirectory();
+        String remoteName = args[1];
+        String remoteBranchName = args[2];
+        String remotePath = readContentsAsString(join(REMOTE_DIR, remoteName, "path"));
+        validateRemoteGitletDirectory(remotePath);
+        if (!join(remotePath, ".gitlet/refs/heads", remoteBranchName).exists()) {
+            exitWithSuccess("That remote does not have that branch.");
+        }
+
+
+
+    }
     public static void validateGitletDirectory() {
         if (!GITLET_DIR.exists()) {
             exitWithSuccess("Not in an initialized Gitlet directory.");

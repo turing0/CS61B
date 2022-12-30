@@ -271,10 +271,16 @@ class Utils {
 //    public static File getBranchFile(String branchName) {
     public static File getBranchFile(String... args) {
         // current branch
-        if (args.length == 0) {
-            return join(Repository.GITLET_DIR, readContentsAsString(Repository.HEAD_FILE));
+        switch (args.length) {
+            case 0:
+                return join(Repository.GITLET_DIR, readContentsAsString(Repository.HEAD_FILE));
+            case 1:
+                return join(Repository.BRANCH_DIR, args[0]);
+//            case 2:
+//                return join(args[1], ".gitlet/refs/heads", args[0]);
+            default:
+                return join(args[1], ".gitlet/refs/heads", args[0]);
         }
-        return join(Repository.BRANCH_DIR, args[0]);
     }
 
     public static String getCurrentBranchName() {

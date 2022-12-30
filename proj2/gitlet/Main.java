@@ -58,6 +58,18 @@ public class Main {
             case "global-log":
                 Repository.handleGlobalLog();
                 break;
+            case "add-remote":
+                Repository.handleAddRemote(args);
+                break;
+            case "rm-remote":
+                Repository.handleRemoveRemote(args);
+                break;
+            case "push":
+                Repository.handlePush(args);
+                break;
+            case "fetch":
+                Repository.handleFetch(args);
+                break;
             default:
                 exitWithSuccess("No command with that name exists.");
         }
