@@ -279,6 +279,7 @@ class Utils {
 //            case 2:
 //                return join(args[1], ".gitlet/refs/heads", args[0]);
             default:
+//                System.out.println(join(args[1], ".gitlet/refs/heads", args[0]).getPath());
                 return join(args[1], ".gitlet/refs/heads", args[0]);
         }
     }

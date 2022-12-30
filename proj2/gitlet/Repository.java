@@ -603,7 +603,8 @@ public class Repository {
         String remotePath = readContentsAsString(join(REMOTE_DIR, remoteName, "path"));
         validateRemoteGitletDirectory(remotePath);
 
-        String remoteHeadID = Commit.fromFile(getBranchFile(remoteBranchName, remotePath)).getID();
+        String remoteHeadID = readContentsAsString(getBranchFile(remoteBranchName, remotePath));
+//        System.out.println(remoteHeadID);
         Set<String> allCommits = getAllParents(Commit.fromFile(getBranchFile()));
         if (!allCommits.contains(remoteHeadID)) {
             exitWithSuccess("Please pull down remote changes before pushing.");
