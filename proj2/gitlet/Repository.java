@@ -564,12 +564,13 @@ public class Repository {
             exitWithSuccess("A remote with that name already exists.");
         }
         join(REMOTE_DIR, remoteName).mkdir();
+//        System.out.println(join(remoteNameDirectory).getParent().replace("/", File.separator));
 //        System.out.println(join(remoteNameDirectory).getParent());
 //        System.out.println(join(remoteNameDirectory).getAbsolutePath());
         try {
             File f = join(REMOTE_DIR, remoteName, "path");
             f.createNewFile();
-            writeContents(f, join(remoteNameDirectory).getParent());
+            writeContents(f, join(remoteNameDirectory).getParent().replace("/", File.separator));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
