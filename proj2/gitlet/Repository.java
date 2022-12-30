@@ -559,7 +559,7 @@ public class Repository {
     public static void handleAddRemote(String[] args) {
         validateGitletDirectory();
         String remoteName = args[1];
-        String remoteNameDirectory = args[2];
+        String remoteNameDirectory = join(args[2]).getAbsolutePath();
         if (join(REMOTE_DIR, remoteName).exists()) {
             exitWithSuccess("A remote with that name already exists.");
         }
@@ -571,7 +571,7 @@ public class Repository {
             File f = join(REMOTE_DIR, remoteName, "path");
             f.createNewFile();
 //            writeContents(f, join(remoteNameDirectory).getParent().replace("/", File.separator));
-            writeContents(f, join(remoteNameDirectory).getAbsolutePath().replace("/", File.separator));
+            writeContents(f, join(remoteNameDirectory).getParent().replace("/", File.separator));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
