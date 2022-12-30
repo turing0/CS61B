@@ -267,6 +267,11 @@ class Utils {
         writeContents(Repository.HEAD_FILE,
                 Repository.GITLET_DIR.toURI().relativize(branchFile.toURI()).getPath());
     }
+    public static void updateHEADRemote(String branchName) {
+        File branchFile = join(Repository.REMOTE_DIR, branchName);
+        writeContents(Repository.HEAD_FILE,
+                Repository.GITLET_DIR.toURI().relativize(branchFile.toURI()).getPath());
+    }
 
 //    public static File getBranchFile(String branchName) {
     public static File getBranchFile(String... args) {

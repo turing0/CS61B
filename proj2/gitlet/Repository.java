@@ -270,7 +270,7 @@ public class Repository {
                     Commit targetCm = Commit.fromFile(join(REMOTE_DIR, branchName));
                     commitCheckout(curCm, targetCm);
                     // update HEAD
-                    updateHEAD(branchName);
+                    updateHEADRemote(branchName);
                     break;
                 }
                 if (!join(BRANCH_DIR, branchName).exists()) {
