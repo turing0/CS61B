@@ -276,10 +276,7 @@ class Utils {
                 return join(Repository.GITLET_DIR, readContentsAsString(Repository.HEAD_FILE));
             case 1:
                 return join(Repository.BRANCH_DIR, args[0]);
-//            case 2:
-//                return join(args[1], ".gitlet/refs/heads", args[0]);
             default:
-//                System.out.println(join(args[1], ".gitlet/refs/heads", args[0]).getPath());
                 return join(args[1], ".gitlet/refs/heads", args[0]);
         }
     }
@@ -348,8 +345,8 @@ class Utils {
             throw new RuntimeException(e);
         }
     }
-    public static void createCmObjectFile(String id, Serializable obj) {
-        File file = join(Repository.COMMIT_DIR, id);
+    public static void createCmObjectFile(String cmID, Serializable obj) {
+        File file = join(Repository.COMMIT_DIR, cmID);
         try {
             file.createNewFile();
             writeObject(file, obj);

@@ -2,6 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -292,8 +295,8 @@ public class Repository {
         Set<String> s = new HashSet<>();
         while (cm != null) {
             s.add(cm.getID());
-            if (cm.getSencondParentID() != null) {
-                s.addAll(getAllParents(Commit.fromID(cm.getSencondParentID())));
+            if (cm.getSecondParentID() != null) {
+                s.addAll(getAllParents(Commit.fromID(cm.getSecondParentID())));
             }
             cm = Commit.fromID(cm.getParentID());
         }
@@ -604,12 +607,24 @@ public class Repository {
         validateRemoteGitletDirectory(remotePath);
 
         String remoteHeadID = readContentsAsString(getBranchFile(remoteBranchName, remotePath));
-//        System.out.println(remoteHeadID);
         Set<String> allCommits = getAllParents(Commit.fromFile(getBranchFile()));
         if (!allCommits.contains(remoteHeadID)) {
             exitWithSuccess("Please pull down remote changes before pushing.");
         }
-        // TODO
+
+        Commit curCm = Commit.fromFile(getBranchFile());
+        while (!curCm.getID().equals(remoteHeadID)) {
+            Path src = join(COMMIT_DIR, curCm.getID()).toPath();
+            Path dst = join(remotePath, ".gitlet/objects/commits", curCm.getID()).toPath();
+            try {
+                Files.copy(src, dst);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            curCm = Commit.fromID(curCm.getParentID());
+        }
+        // TODO: blobs???
+
 
     }
 
@@ -622,8 +637,40 @@ public class Repository {
         if (!join(remotePath, ".gitlet/refs/heads", remoteBranchName).exists()) {
             exitWithSuccess("That remote does not have that branch.");
         }
+        // copy ...
+        Commit curCmRemote = Commit.fromFile(join(join(remotePath, ".gitlet/refs/heads", remoteBranchName)));
+        Set<String> allCommits = getAllParents(curCmRemote);
+        for (String cmID : allCommits) {
+            Path src = join(remotePath, ".gitlet/objects/commits", cmID).toPath();
+            Path dst = join(COMMIT_DIR, cmID).toPath();
 
-
+            try {
+                Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+                Commit cm = Commit.fromID(cmID);
+                for (String blid : cm.getFileMap().values()) {
+                    Blob bl = Blob.fromID(blid);
+                    createObjectFile(blid, bl);
+//                    Path srcBl = join(remotePath, ".gitlet/objects", blid.substring(0, 2), blid.substring(2)).toPath();
+//                    Path dstBl = join(OBJECT_DIR, cmID).toPath();
+//
+//                    Files.copy(srcBl, dstBl, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        // create new branch
+        String branchName = String.format("%s/%s", remoteName, remoteBranchName);
+//        if (join(BRANCH_DIR, branchName).exists()) {
+//            exitWithSuccess("A branch with that name already exists.");
+//        }
+        File newBranchFile = join(BRANCH_DIR, branchName);
+        try {
+            newBranchFile.createNewFile();
+            writeContents(newBranchFile, curCmRemote.getID());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     public static void validateGitletDirectory() {
