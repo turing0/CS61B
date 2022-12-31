@@ -621,6 +621,7 @@ public class Repository {
         }
 
         Commit curCm = Commit.fromFile(getBranchFile());
+//        System.out.println(curCm.getID());
         while (!curCm.getID().equals(remoteHeadID)) {
             Path src = join(COMMIT_DIR, curCm.getID()).toPath();
             Path dst = join(remotePath, ".gitlet/objects/commits", curCm.getID()).toPath();
@@ -634,6 +635,8 @@ public class Repository {
         // TODO: blobs???
 
 
+        // update branch
+        writeContents(getBranchFile(remoteBranchName, remotePath), Commit.fromFile(getBranchFile()).getID());
     }
 
     public static void handleFetch(String[] args) {
@@ -690,6 +693,12 @@ public class Repository {
         }
 
     }
+
+    public static void handlePull(String[] args) {
+        validateGitletDirectory();
+
+    }
+
     public static void validateGitletDirectory() {
         if (!GITLET_DIR.exists()) {
             exitWithSuccess("Not in an initialized Gitlet directory.");

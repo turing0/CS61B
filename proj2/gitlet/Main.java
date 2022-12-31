@@ -70,6 +70,9 @@ public class Main {
             case "fetch":
                 Repository.handleFetch(args);
                 break;
+            case "pull":
+                Repository.handlePull(args);
+                break;
             default:
                 exitWithSuccess("No command with that name exists.");
         }
