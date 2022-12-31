@@ -79,7 +79,7 @@ public class Commit implements Serializable {
     }
     public static Commit fromOtherFile(String remotePath, File f) {
 //        System.out.println(readContentsAsString(f));
-        File objectFile = join(remotePath,".gitlet/objects/commits",  readContentsAsString(f));
+        File objectFile = join(remotePath, ".gitlet/objects/commits", readContentsAsString(f));
 //        System.out.println(objectFile);
         return readObject(objectFile, Commit.class);
     }

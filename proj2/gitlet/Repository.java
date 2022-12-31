@@ -626,14 +626,30 @@ public class Repository {
             Path src = join(COMMIT_DIR, curCm.getID()).toPath();
             Path dst = join(remotePath, ".gitlet/objects/commits", curCm.getID()).toPath();
             try {
-                Files.copy(src, dst);
+                Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+                Commit cm = Commit.fromID(curCm.getID());
+                for (String blid : cm.getFileMap().values()) {
+//                    Blob bl = Blob.fromID(blid);
+//                    createObjectFile(blid, bl);
+                    Path srcBl = join(Repository.OBJECT_DIR, blid.substring(0, 2), blid.substring(2)).toPath();
+                    File filePath = join(remotePath, ".gitlet/objects", blid.substring(0, 2));
+                    filePath.mkdir();
+                    File file = join(filePath, blid.substring(2));
+                    Path dstBl = file.toPath();
+                    Files.copy(srcBl, dstBl, StandardCopyOption.REPLACE_EXISTING);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             curCm = Commit.fromID(curCm.getParentID());
         }
-        // TODO: blobs???
 
+        // TODO: reset???
+        String targetCmID = Commit.fromFile(getBranchFile()).getID();
+        checkCommitID(targetCmID);
+        Commit cm = Commit.fromID(remoteHeadID);
+        Commit targetCm = Commit.fromID(targetCmID);
+        commitCheckout(cm, targetCm);
 
         // update branch
         writeContents(getBranchFile(remoteBranchName, remotePath), Commit.fromFile(getBranchFile()).getID());
@@ -649,7 +665,6 @@ public class Repository {
             exitWithSuccess("That remote does not have that branch.");
         }
         // copy ...
-//        System.out.println(remotePath);
 //        System.out.println(getBranchFile(remoteBranchName, remotePath));
 //        Commit curCmRemote = Commit.fromFile(getBranchFile(remoteBranchName, remotePath));
         Commit curCmRemote = Commit.fromOtherFile(remotePath, getBranchFile(remoteBranchName, remotePath));
@@ -696,6 +711,13 @@ public class Repository {
 
     public static void handlePull(String[] args) {
         validateGitletDirectory();
+
+        handleFetch(args);
+//        String remoteName = args[1];
+        String remoteBranchName = args[2];
+//        String remotePath = readContentsAsString(join(REMOTE_DIR, remoteName, "path"));
+        String[] mgArgs = {"merge", remoteBranchName};
+        handleMerge(mgArgs);
 
     }
 
