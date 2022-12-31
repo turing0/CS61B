@@ -287,6 +287,10 @@ class Utils {
     }
 
     public static String getCurrentBranchName() {
+        if (readContentsAsString(Repository.HEAD_FILE).contains("remotes")) {
+            String[] directories = readContentsAsString(Repository.HEAD_FILE).split("remotes/");
+            return directories[directories.length - 1];
+        }
         String[] directories = readContentsAsString(Repository.HEAD_FILE).split("/");
         return directories[directories.length - 1];
     }
