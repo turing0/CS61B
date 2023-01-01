@@ -1,0 +1,44 @@
+What would you like L to be?: 600
+
+Enter # strings to insert into hashmap.ULLMap: asefefgdwe
+Please enter a positive integer: 50
+class hashmap.ULLMap: 0.00 sec
+
+Enter # strings to insert into your hashmap.MyHashMap: asfgaweg
+Please enter a positive integer: awseg
+Please enter a positive integer: 500
+class hashmap.MyHashMap: 0.01 sec
+
+Enter # strings to insert into Java's HashMap: asehrawerg
+Please enter a positive integer: 6000
+Java's Built-in HashMap: 0.04 sec
+
+
+
+Enter # strings to insert into hashmap.ULLMap: srhsergsdfg
+Please enter a positive integer: 6000
+class hashmap.ULLMap: 0.24 sec
+
+Enter # strings to insert into hashmap.MyHashMap: srhsergsdfg
+Please enter a positive integer: 6000
+class hashmap.MyHashMap: 0.03 sec
+
+Enter # strings to insert into Java's HashMap: srhsergsdfg
+Please enter a positive integer: 6000
+Java's Built-in HashMap: 0.00 sec
+
+
+
+What would you like L to be?: idjfaiwsejg
+Please enter a positive integer: 5000
+
+Enter # strings to insert into each map: asrgsdfg
+Please enter a positive integer: 5000
+class hashmap.MyHashMapALBuckets: 0.29 sec
+class hashmap.MyHashMapLLBuckets: 0.27 sec
+class hashmap.MyHashMapTSBuckets: 0.29 sec
+class hashmap.MyHashMapHSBuckets: 0.30 sec
+class hashmap.MyHashMapPQBuckets: 0.29 sec
+
+
+
