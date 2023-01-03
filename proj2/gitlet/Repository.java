@@ -516,6 +516,28 @@ public class Repository {
         File targetFile = join(CWD, fileName);
         writeContents(targetFile, bl.getContents());
     }
+    public static void commitCheckoutRemote(Commit curCm, Commit targetCm) {
+        // check  if a working file is untracked in the current branch and would be overwritten by the checkout
+        checkUntrackedOverwritten(curCm, targetCm);
+        for (String fileName : curCm.getFileMap().keySet()) {
+            if (targetCm.getFileBlobID(fileName) == null) {
+                File f = join(CWD, fileName);
+                f.delete();
+            } else {
+                if (!targetCm.getFileBlobID(fileName).equals(curCm.getFileBlobID(fileName))) {
+                    fileCheckout(fileName, targetCm.getID());
+                }
+            }
+        }
+        // case: new file -> create
+        if (targetCm.getFileMap() != null) {
+            for (String fileName : targetCm.getFileMap().keySet()) {
+                if (curCm.getFileBlobID(fileName) == null) {
+                    fileCheckout(fileName, targetCm.getID());
+                }
+            }
+        }
+    }
     public static String makeCommit(String message) {
         Commit cm = new Commit(null, message);
         cm.saveCommit();
@@ -644,12 +666,12 @@ public class Repository {
             curCm = Commit.fromID(curCm.getParentID());
         }
 
-        // TODO: reset???
         String targetCmID = Commit.fromFile(getBranchFile()).getID();
         checkCommitID(targetCmID);
         Commit cm = Commit.fromID(remoteHeadID);
         Commit targetCm = Commit.fromID(targetCmID);
-        commitCheckout(cm, targetCm);
+        // TODO: remote???
+        commitCheckoutRemote(cm, targetCm);
 
         // update branch
         writeContents(getBranchFile(remoteBranchName, remotePath), Commit.fromFile(getBranchFile()).getID());
